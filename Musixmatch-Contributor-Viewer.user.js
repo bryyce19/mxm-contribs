@@ -2,7 +2,7 @@
 // @name         Musixmatch-Contributor-Viewer
 // @author       Bryce
 // @namespace    http://tampermonkey.net/
-// @version      2.9.5
+// @version      2.9.6
 // @description  Contributor viewer with filters, emoji, scrolling, and info tab checks
 // @match        https://curators.musixmatch.com/*
 // @grant        GM_xmlhttpRequest
@@ -261,7 +261,7 @@
                     const url = `https:${href}`;
                     button.dataset.lyricsUrl = url;
                     button.style.display = 'block';
-                    lastTaskId = new URLSearchParams(location.search).get('commontrack_id'); // ✅ Fix here
+                    lastTaskId = new URLSearchParams(location.search).get('commontrack_id'); // ✅ Fix here.
                 }
             }
         }
