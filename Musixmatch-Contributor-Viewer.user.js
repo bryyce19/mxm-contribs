@@ -6,8 +6,8 @@
 // @match        https://curators.musixmatch.com/*
 // @grant        GM_xmlhttpRequest
 // @connect      musixmatch.com
-// @updateURL    https://raw.githubusercontent.com/yourusername/yourrepo/main/musixmatch-contributor-viewer.user.js
-// @downloadURL  https://raw.githubusercontent.com/yourusername/yourrepo/main/musixmatch-contributor-viewer.user.js
+// @updateURL    https://github.com/bryyce19/mxm-contribs/raw/refs/heads/main/Musixmatch-Contributor-Viewer.user.js
+// @downloadURL  https://github.com/bryyce19/mxm-contribs/raw/refs/heads/main/Musixmatch-Contributor-Viewer.user.js
 // ==/UserScript==
 
 (function () {
