@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Musixmatch-Contributor-Viewer
 // @namespace    http://tampermonkey.net/
-// @version      2.9.3
+// @version      2.9.4
 // @description  Contributor viewer with filters, emoji, scrolling, and info tab checks
 // @match        https://curators.musixmatch.com/*
 // @grant        GM_xmlhttpRequest
