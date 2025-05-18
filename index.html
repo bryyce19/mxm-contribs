@@ -32,9 +32,19 @@
       text-decoration: none;
       display: inline-block;
       transition: background-color 0.3s ease;
+      cursor: pointer;
     }
     a.button:hover {
       background-color: #e03e3e;
+    }
+    .note {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+    .note a {
+      color: #FF5228;
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -45,9 +55,28 @@
   <h1>Install the Musixmatch Contributor Viewer</h1>
   <p>Click the button below to install or update the latest version of the script.</p>
 
-  <a class="button" href="https://github.com/bryyce19/mxm-contribs/raw/refs/heads/main/Musixmatch-Contributor-Viewer.user.js">
+  <a class="button" id="installBtn" href="https://github.com/bryyce19/mxm-contribs/raw/refs/heads/main/Musixmatch-Contributor-Viewer.user.js">
     Install Script
   </a>
+
+  <div class="note">
+    <p>You need the <strong>Tampermonkey extension</strong> installed to use this script.  
+    <a href="https://www.tampermonkey.net/" target="_blank" rel="noopener">Download Tampermonkey</a></p>
+  </div>
+
+  <!-- Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script>
+    const button = document.getElementById("installBtn");
+    button.addEventListener("click", () => {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#FF5228', '#FFA07A', '#FF7F50']
+      });
+    });
+  </script>
 
 </body>
 </html>
