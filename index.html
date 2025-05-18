@@ -6,22 +6,26 @@
   <title>Install Musixmatch Contributor Viewer</title>
   <style>
     body {
-      font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background: #f9f9f9;
       text-align: center;
       padding: 40px;
     }
+
     img {
       max-width: 300px;
       margin-bottom: 40px;
     }
+
     h1 {
       color: #333;
     }
+
     p {
       color: #555;
       margin-bottom: 30px;
     }
+
     a.button {
       background-color: #FF5228;
       color: white;
@@ -32,39 +36,103 @@
       text-decoration: none;
       display: inline-block;
       transition: background-color 0.3s ease;
-      cursor: pointer;
     }
-    a.button:hover {
+
+    /* Disabled button styles */
+    a.button.disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    a.button:hover:not(.disabled) {
       background-color: #f86f4e;
     }
+
     .note {
       margin-top: 20px;
       font-size: 14px;
       color: #666;
     }
+
     .note a {
       color: #FF5228;
       text-decoration: underline;
     }
+
+    /* Info popup */
+    .popup {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      padding: 16px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 1000;
+      max-width: 280px;
+      text-align: left;
+    }
+
+    .popup h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      color: #FF5228;
+    }
+
+    .popup p {
+      margin: 0;
+      font-size: 14px;
+      color: #444;
+    }
+
+    .popup .close {
+      position: absolute;
+      top: 6px;
+      right: 10px;
+      font-size: 16px;
+      color: #aaa;
+      cursor: pointer;
+    }
+
+    .popup .close:hover {
+      color: #000;
+    }
   </style>
 </head>
 <body>
+
+  <div class="popup" id="popup">
+    <div class="close" onclick="document.getElementById('popup').style.display='none';">&times;</div>
+    <h3>Coming Soon</h3>
+    <p>The Musixmatch Contributor Viewer script isn’t ready just yet. Check back soon!</p>
+  </div>
 
   <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Musixmatch-logo-panoramic-Brand.png" alt="Musixmatch Logo"/>
 
   <h1>Install the Musixmatch Contributor Viewer</h1>
   <p>Click below to install or update to the latest version of the script.</p>
 
+  <!-- Disabled "Coming Soon" button -->
+  <a class="button disabled" id="installBtnDisabled" href="#">
+    Coming Soon
+  </a>
+
+  <!-- Original working button (commented out) -->
+  <!--
   <a class="button" id="installBtn" href="https://github.com/bryyce19/mxm-contribs/raw/refs/heads/main/Musixmatch-Contributor-Viewer.user.js">
     Install Script
   </a>
+  -->
 
   <div class="note">
     <p>You need the <strong>Tampermonkey extension</strong> installed to use this script!  
     <a href="https://www.tampermonkey.net/" target="_blank" rel="noopener">Download Tampermonkey</a></p>
   </div>
 
-  <!-- Confetti Library -->
+  <!-- Confetti Library (commented out while script is unavailable) -->
+  <!--
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script>
     const button = document.getElementById("installBtn");
@@ -77,6 +145,7 @@
       });
     });
   </script>
+  -->
 
 </body>
 </html>
