@@ -36,16 +36,10 @@
       text-decoration: none;
       display: inline-block;
       transition: background-color 0.3s ease;
+      cursor: pointer;
     }
 
-    /* Disabled button styles */
-    a.button.disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-
-    a.button:hover:not(.disabled) {
+    a.button:hover {
       background-color: #f86f4e;
     }
 
@@ -60,92 +54,179 @@
       text-decoration: underline;
     }
 
-    /* Info popup */
-    .popup {
+    /* Fullscreen modal styles */
+    #modalOverlay {
       position: fixed;
-      top: 20px;
-      right: 20px;
-      background-color: #fff;
-      border: 1px solid #ddd;
-      padding: 16px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      z-index: 1000;
-      max-width: 280px;
-      text-align: left;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
     }
 
-    .popup h3 {
-      margin: 0 0 8px;
-      font-size: 16px;
+    #modalContent {
+      background: white;
+      border-radius: 12px;
+      max-width: 450px;
+      width: 90%;
+      padding: 30px 25px 35px;
+      text-align: left;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      position: relative;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    #modalContent h2 {
+      margin-top: 0;
       color: #FF5228;
     }
 
-    .popup p {
-      margin: 0;
-      font-size: 14px;
+    #modalContent p {
+      margin-bottom: 1em;
       color: #444;
+      font-size: 15px;
+      line-height: 1.4;
     }
 
-    .popup .close {
+    #modalContent a {
+      color: #FF5228;
+      text-decoration: underline;
+    }
+
+    #modalClose {
       position: absolute;
-      top: 6px;
-      right: 10px;
-      font-size: 16px;
-      color: #aaa;
+      top: 12px;
+      right: 15px;
+      font-size: 22px;
+      color: #999;
       cursor: pointer;
+      font-weight: bold;
+      user-select: none;
     }
 
-    .popup .close:hover {
-      color: #000;
+    #modalClose:hover {
+      color: #555;
+    }
+
+    #continueBtn {
+      background-color: #FF5228;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    #continueBtn:hover {
+      background-color: #f86f4e;
+    }
+
+    /* GitHub icon inline */
+    .icon-github {
+      display: inline-block;
+      vertical-align: middle;
+      width: 20px;
+      height: 20px;
+      margin-right: 6px;
+      fill: currentColor;
     }
   </style>
 </head>
 <body>
-
-  <div class="popup" id="popup">
-    <div class="close" onclick="document.getElementById('popup').style.display='none';">&times;</div>
-    <h3>Coming Soon</h3>
-    <p>The Musixmatch Contributor Viewer script isn’t ready just yet. Check back soon!</p>
-  </div>
 
   <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Musixmatch-logo-panoramic-Brand.png" alt="Musixmatch Logo"/>
 
   <h1>Install the Musixmatch Contributor Viewer</h1>
   <p>Click below to install or update to the latest version of the script.</p>
 
-  <!-- Disabled "Coming Soon" button -->
-  <a class="button disabled" id="installBtnDisabled" href="#">
-    Coming Soon
-  </a>
-
-  <!-- Original working button (commented out) -->
-  <!--
-  <a class="button" id="installBtn" href="https://github.com/bryyce19/mxm-contribs/raw/refs/heads/main/Musixmatch-Contributor-Viewer.user.js">
+  <a class="button" id="installBtn" href="https://github.com/bryyce19/mxm-contribs/raw/refs/heads/main/Musixmatch-Contributor-Viewer.user.js" target="_blank" rel="noopener noreferrer">
     Install Script
   </a>
-  -->
 
   <div class="note">
     <p>You need the <strong>Tampermonkey extension</strong> installed to use this script!  
-    <a href="https://www.tampermonkey.net/" target="_blank" rel="noopener">Download Tampermonkey</a></p>
+    <a href="https://www.tampermonkey.net/" target="_blank" rel="noopener noreferrer">Download Tampermonkey</a></p>
   </div>
 
-  <!-- Confetti Library (commented out while script is unavailable) -->
-  <!--
+  <!-- Modal -->
+  <div id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc">
+    <div id="modalContent">
+      <div id="modalClose" aria-label="Close modal">&times;</div>
+      <h2 id="modalTitle">About the Musixmatch Contributor Viewer Script</h2>
+      <p id="modalDesc">
+        This script helps you view contributors on Musixmatch with filters and enhanced info.<br><br>
+
+        <strong>Source code:</strong> 
+        <a href="https://github.com/bryyce19/mxm-contribs" target="_blank" rel="noopener noreferrer">
+          <svg class="icon-github" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 0.297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.387 
+            0.6 0.113 0.82-0.258 0.82-0.577 0-0.285-0.01-1.04-0.015-2.04-3.338 
+            0.724-4.042-1.61-4.042-1.61-0.546-1.387-1.333-1.757-1.333-1.757-1.09-0.744 
+            0.084-0.729 0.084-0.729 1.205 0.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 
+            1.305 3.495 0.997 0.108-0.776 0.418-1.305 0.762-1.605-2.665-0.3-5.466-1.332-5.466-5.931 
+            0-1.31 0.468-2.381 1.235-3.221-0.123-0.303-0.535-1.523 0.117-3.176 0 0 1.008-0.322 
+            3.301 1.23 0.957-0.266 1.983-0.399 3.003-0.404 1.02 0.005 2.047 0.138 3.006 
+            0.404 2.291-1.552 3.297-1.23 3.297-1.23 0.653 1.653 0.241 2.873 0.118 3.176 
+            0.77 0.84 1.233 1.911 1.233 3.221 0 4.609-2.807 5.625-5.479 5.921 0.43 0.37 
+            0.823 1.102 0.823 2.222 0 1.606-0.015 2.898-0.015 3.293 0 0.319 0.216 0.694 
+            0.825 0.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path>
+          </svg>
+          github.com/bryyce19/mxm-contribs
+        </a>
+      </p>
+      <p>
+        <strong>Directions Page:</strong> 
+        <a href="https://github.com/bryyce19/mxm-contribs#readme" target="_blank" rel="noopener noreferrer">Read the usage instructions here</a>
+      </p>
+      <p>
+        Please ensure you have <strong>Tampermonkey</strong> installed in your browser before installing the script.
+      </p>
+      <a href="https://github.com/bryyce19/mxm-contribs/raw/refs/heads/main/Musixmatch-Contributor-Viewer.user.js" id="continueBtn" target="_blank" rel="noopener noreferrer">
+        Continue to Install
+      </a>
+    </div>
+  </div>
+
+  <!-- Confetti Library -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script>
-    const button = document.getElementById("installBtn");
-    button.addEventListener("click", () => {
+    const installBtn = document.getElementById('installBtn');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalClose = document.getElementById('modalClose');
+    const continueBtn = document.getElementById('continueBtn');
+
+    installBtn.addEventListener('click', (event) => {
+      event.preventDefault(); // Prevent immediate navigation
       confetti({
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 },
         colors: ['#FF5228', '#000000', '#FF7F50']
       });
+      modalOverlay.style.display = 'flex';
     });
+
+    modalClose.addEventListener('click', () => {
+      modalOverlay.style.display = 'none';
+    });
+
+    // Optional: close modal on outside click
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
+        modalOverlay.style.display = 'none';
+      }
+    });
+
   </script>
-  -->
 
 </body>
 </html>
