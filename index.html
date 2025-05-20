@@ -276,12 +276,18 @@
       // Log click to Google Sheets
       fetch('https://script.google.com/macros/s/AKfycbwU6mUTl9-UhRaHlTjkfTcETOAlJELx-q2jgDaVFKGluhtw7AS_1SxY50v1t1pa844Hcg/exec', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          event: 'Install button clicked',
-          userAgent: navigator.userAgent
-        })
-      });
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        event: 'Install button clicked',
+        userAgent: navigator.userAgent
+      })
+    })
+    .then(res => res.json())
+    .then(data => console.log("install success and log"))
+    .catch(err => console.error("Fetch error:", err));
       
       confetti({
         particleCount: 100,
