@@ -25,7 +25,7 @@ Click the link below to install the latest version of the script:
 Once installed, visit any song page on [musixmatch.com](https://www.musixmatch.com/), click on the orange contributor button, and you'll see contributor details automatically.
 
 ## ℹ️ Guide
-Click here to learn more how to use the tool
+Click [here](https://bryyce19.github.io/mxm-contribs/guide.html) to learn about how to use the tool + a video tutorial
 
 ## 🧪 Compatibility
 
