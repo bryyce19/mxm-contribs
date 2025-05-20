@@ -51,6 +51,15 @@
       color: #666;
     }
 
+    .note a {
+      color: #FF5228;
+      text-decoration: none;
+    }
+
+    .note a:visited {
+      color: #FF5228;
+    }
+
     /* Modal Styles */
     #modalOverlay {
       position: fixed;
@@ -99,6 +108,15 @@
       line-height: 1.5;
     }
 
+    #modalContent a {
+      color: #FF5228;
+      text-decoration: none;
+    }
+
+    #modalContent a:visited {
+      color: #FF5228;
+    }
+
     #modalClose {
       position: absolute;
       top: 12px;
@@ -111,26 +129,33 @@
     #modalClose:hover {
       color: #555;
     }
-    
-    .alert-box.success {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-    }
 
+    .alert, .success {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 1em;
+      font-weight: 500;
+    }
 
     .alert {
       background-color: #ffe5e0;
       border-left: 6px solid #FF5228;
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 1em;
       color: #d52a00;
-      font-weight: 500;
     }
 
     .alert a {
       color: #FF5228;
       text-decoration: underline;
+    }
+
+    .success {
+      background-color: #e9f8ee;
+      border-left: 6px solid #28a745;
+      color: #2b7b47;
+    }
+
+    .success i {
+      margin-right: 6px;
     }
 
     #continueBtn {
@@ -159,7 +184,7 @@
 
     .footer-buttons a {
       background: #e0e0e0;
-      color: #333;
+      color: #333 !important;
       border-radius: 6px;
       padding: 10px 16px;
       text-decoration: none;
@@ -182,6 +207,10 @@
       color: #28a745;
       font-size: 16px;
       font-weight: 600;
+    }
+
+    #completed i {
+      margin-right: 6px;
     }
   </style>
 </head>
@@ -210,74 +239,75 @@
         This script helps you view contributors on Musixmatch with filters and enhanced info.
       </p>
 
-      <div class="alert">
+      <div id="tmStatus" class="alert">
         <i class="fas fa-exclamation-triangle"></i> You must have <strong>Tampermonkey</strong> installed! <a href="https://www.tampermonkey.net/" target="_blank">Get it here</a>
       </div>
 
       <p>
         <strong>Source Code:</strong> <a href="https://github.com/bryyce19/mxm-contribs" target="_blank"><i class="fab fa-github"></i> View on GitHub</a><br>
-        <strong>Usage Instructions:</strong> <a href="https://github.com/bryyce19/mxm-contribs#readme" target="_blank">Read Docs</a>
+        <strong>Usage Instructions:</strong> <a href="https://github.com/bryyce19/mxm-contribs#readme" target="_blank"><i class="fas fa-book-open"></i> Read Docs</a>
       </p>
 
       <button id="continueBtn">Continue to Install</button>
 
+      <div id="completed">
+        <i class="fas fa-check-circle"></i> Successfully installed. <a href="https://www.musixmatch.com/" target="_blank">Continue to browser</a>
+      </div>
+
       <div class="footer-buttons">
         <a href="mailto:your-email@example.com"><i class="fas fa-envelope"></i> Contact</a>
         <a href="https://github.com/bryyce19/mxm-contribs" target="_blank"><i class="fab fa-github"></i> GitHub</a>
-      </div>
-
-      <div id="completed">
-        <i class="fas fa-check-circle"></i> Installation started. Check your browser for prompts.
       </div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script>
-  const installBtn = document.getElementById('installBtn');
-  const modalOverlay = document.getElementById('modalOverlay');
-  const modalClose = document.getElementById('modalClose');
-  const tamperBox = document.getElementById('tampermonkeyCheck');
+    const installBtn = document.getElementById('installBtn');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalClose = document.getElementById('modalClose');
+    const continueBtn = document.getElementById('continueBtn');
+    const completed = document.getElementById('completed');
+    const tmStatus = document.getElementById('tmStatus');
 
-  installBtn.addEventListener('click', (event) => {
-    event.preventDefault();
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#FF5228', '#000000', '#FF7F50']
-    });
-    modalOverlay.style.display = 'flex';
-  });
+    installBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#FF5228', '#000000', '#FF7F50']
+      });
+      modalOverlay.style.display = 'flex';
 
-  modalClose.addEventListener('click', () => {
-    modalOverlay.style.display = 'none';
-  });
-
-  modalOverlay.addEventListener('click', (e) => {
-    if (e.target === modalOverlay) {
-      modalOverlay.style.display = 'none';
-    }
-  });
-
-  // Tampermonkey Detection
-  const detectTampermonkey = async () => {
-    try {
-      // This checks for a Tampermonkey-injected variable
-      const isTampermonkey = typeof GM_info !== "undefined" || navigator.userAgent.includes("Tampermonkey");
-
-      if (isTampermonkey) {
-        tamperBox.classList.add('success');
-        tamperBox.innerHTML = "✅ Tampermonkey is installed! You’re good to go.";
+      // Detect Tampermonkey
+      if (typeof GM_info !== 'undefined') {
+        tmStatus.className = 'success';
+        tmStatus.innerHTML = '<i class="fas fa-check-circle"></i> Tampermonkey detected!';
+      } else {
+        tmStatus.className = 'alert';
+        tmStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> You must have <strong>Tampermonkey</strong> installed! <a href="https://www.tampermonkey.net/" target="_blank">Get it here</a>';
       }
-    } catch (err) {
-      console.warn("Tampermonkey detection failed.", err);
-    }
-  };
+    });
 
-  detectTampermonkey();
-</script>
+    modalClose.addEventListener('click', () => {
+      modalOverlay.style.display = 'none';
+    });
 
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
+        modalOverlay.style.display = 'none';
+      }
+    });
+
+    continueBtn.addEventListener('click', () => {
+      completed.style.display = 'block';
+      // Redirect after short delay
+      setTimeout(() => {
+        window.location.href = "https://github.com/bryyce19/mxm-contribs/raw/main/mxm-contribs.user.js";
+      }, 2000);
+    });
+  </script>
 
 </body>
 </html>
