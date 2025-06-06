@@ -17,14 +17,12 @@
     .banner {
       background-color: #ffeeab;
       padding: 10px;
-      font-weight: bold;
       margin-bottom: 20px;
       border-radius: 8px;
     }
 
     .beta-warning {
       color: red;
-      font-weight: bold;
       margin: 20px 0;
     }
 
@@ -75,7 +73,7 @@
       color: #FF5228;
     }
 
-    /* Modal Styles (same as before, unchanged) */
+/*Modal*/
     #modalOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.7); display: none; align-items: center; justify-content: center; z-index: 10000; animation: fadeIn 0.3s ease-in-out; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     #modalContent { background: white; border-radius: 14px; max-width: 480px; width: 90%; padding: 30px; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.4); position: relative; animation: slideUp 0.3s ease-in-out; }
@@ -172,7 +170,7 @@
   <div id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc">
     <div id="modalContent">
       <div id="modalClose" aria-label="Close modal">&times;</div>
-      <h2 id="modalTitle">About the Contributor Viewer</h2>
+      <h2 id="modalTitle">About the BETA Contributor Viewer</h2>
 
       <p id="modalDesc">
         Welcome to the beta! This version has the same base features, but may include some experimental features. If you see bugs, you must report them immediately.
