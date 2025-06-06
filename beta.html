@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Musixmatch Contributor Viewer – Beta</title>
+  <link rel="icon" type="image/x-icon" href="https://em-content.zobj.net/source/apple/419/busts-in-silhouette_1f465.png">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f9f9f9;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .banner {
+      background-color: #ffcc00;
+      padding: 10px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .beta-warning {
+      color: red;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    img {
+      max-width: 300px;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    p {
+      color: #555;
+      margin-bottom: 30px;
+    }
+
+    a.button {
+      background-color: #FF5228;
+      color: white;
+      padding: 14px 28px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      display: inline-block;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      cursor: pointer;
+    }
+
+    a.button:hover {
+      background-color: #f86f4e;
+      transform: scale(1.05);
+    }
+
+    .note {
+      margin-top: 20px;
+      font-size: 10px;
+      color: #666;
+    }
+
+    .note a {
+      color: #FF5228;
+      text-decoration: none;
+    }
+
+    .note a:visited {
+      color: #FF5228;
+    }
+
+    /* Modal Styles (same as before, unchanged) */
+    #modalOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.7); display: none; align-items: center; justify-content: center; z-index: 10000; animation: fadeIn 0.3s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    #modalContent { background: white; border-radius: 14px; max-width: 480px; width: 90%; padding: 30px; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.4); position: relative; animation: slideUp 0.3s ease-in-out; }
+    @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    #modalContent h2 { margin-top: 0; color: #FF5228; }
+    #modalContent p { margin-bottom: 1em; color: #444; font-size: 15px; line-height: 1.5; }
+    #modalContent a { color: #FF5228; text-decoration: none; }
+    #modalContent a:visited { color: #FF5228; }
+    #modalClose { position: absolute; top: 12px; right: 15px; font-size: 22px; color: #999; cursor: pointer; }
+    #modalClose:hover { color: #555; }
+
+    .alert, .success { padding: 12px; border-radius: 8px; margin-bottom: 1em; font-weight: 500; }
+    .alert { background-color: #ffe5e0; border-left: 6px solid #FF5228; color: #d52a00; }
+    .alert a { color: #FF5228; text-decoration: underline; }
+    .success { background-color: #e9f8ee; border-left: 6px solid #28a745; color: #2b7b47; }
+    .success i { margin-right: 6px; }
+
+    #continueBtn {
+      background-color: #FF5228;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    #continueBtn:hover {
+      background-color: #f86f4e;
+      transform: scale(1.05);
+    }
+
+    .footer-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 25px;
+    }
+
+    .footer-buttons a {
+      background: #e0e0e0;
+      color: #333 !important;
+      border-radius: 6px;
+      padding: 10px 16px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      transition: background-color 0.3s;
+    }
+
+    .footer-buttons a:hover {
+      background-color: #ccc;
+    }
+
+    .footer-buttons i {
+      margin-right: 6px;
+    }
+
+    #completed {
+      display: none;
+      margin-top: 20px;
+      color: #28a745;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    #completed i {
+      margin-right: 6px;
+    }
+  </style>
+
+  <script>
+    function _0x4e99(){const _0x29b3f8=['1538640lzoeFb','location','Enter\x20the\x20beta\x20password:','Incorrect\x20password.\x20Redirecting\x20to\x20main\x20site.','187276uurpEf','href','3475464ipvysA','7GGgzBl','45javzaB','25LdjWvu','110rrqaqi','2246086XwaPGa','7653136cqnnyt','3eOSoYx','697512tKTuvI','iamcool27','2418810WVawgU'];_0x4e99=function(){return _0x29b3f8;};return _0x4e99();}function _0x294f(_0x1365b9,_0x5ab3cf){const _0x4e9931=_0x4e99();return _0x294f=function(_0x294fe8,_0x57c925){_0x294fe8=_0x294fe8-0xa6;let _0x2a42d0=_0x4e9931[_0x294fe8];return _0x2a42d0;},_0x294f(_0x1365b9,_0x5ab3cf);}(function(_0x1648c5,_0xba191d){const _0x210157=_0x294f,_0x16e07b=_0x1648c5();while(!![]){try{const _0x5fc61a=parseInt(_0x210157(0xb3))/0x1+parseInt(_0x210157(0xb0))/0x2*(-parseInt(_0x210157(0xb2))/0x3)+-parseInt(_0x210157(0xa9))/0x4*(-parseInt(_0x210157(0xae))/0x5)+parseInt(_0x210157(0xb6))/0x6+-parseInt(_0x210157(0xac))/0x7*(parseInt(_0x210157(0xb1))/0x8)+parseInt(_0x210157(0xad))/0x9*(-parseInt(_0x210157(0xb5))/0xa)+-parseInt(_0x210157(0xaf))/0xb*(-parseInt(_0x210157(0xab))/0xc);if(_0x5fc61a===_0xba191d)break;else _0x16e07b['push'](_0x16e07b['shift']());}catch(_0x30f0c0){_0x16e07b['push'](_0x16e07b['shift']());}}}(_0x4e99,0xc2229),(function(){const _0x28f84a=_0x294f,_0x1b0e8e=prompt(_0x28f84a(0xa7));_0x1b0e8e!==_0x28f84a(0xb4)&&(alert(_0x28f84a(0xa8)),window[_0x28f84a(0xa6)][_0x28f84a(0xaa)]='https://bryyce19.github.io/mxm-contribs/');}()));
+  </script>
+
+</head>
+<body>
+
+  <div class="banner">⚠️ <strong>Beta Version</strong> — Features may change, and bugs might exist.</div>
+
+  <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Musixmatch-logo-panoramic-Brand.png" alt="Musixmatch Logo"/>
+
+  <h1>Install the Musixmatch Contributor Viewer (Beta)</h1>
+  <p class="beta-warning">This is a beta version. Use at your own risk.</p>
+
+  <a class="button" id="installBtn" href="#">Install Beta Script</a>
+
+  <div class="note">
+    <p>This script is not endorsed by or affilated with Musixmatch in any way.</p>
+  </div>
+
+  <div id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc">
+    <div id="modalContent">
+      <div id="modalClose" aria-label="Close modal">&times;</div>
+      <h2 id="modalTitle">About the Contributor Viewer</h2>
+
+      <p id="modalDesc">
+        This script helps you view contributors on Musixmatch with filters and enhanced info.
+      </p>
+
+      <div id="tmStatus" class="alert">
+        <i class="fas fa-exclamation-triangle"></i> You must have <strong>Tampermonkey</strong> installed! <a href="https://www.tampermonkey.net/" target="_blank">Get it here</a>
+      </div>
+
+      <p>
+        <strong>Source Code:</strong> <a href="https://github.com/bryyce19/mxm-contribs/blob/beta/Musixmatch-Contributor-Viewer.user.js" target="_blank"><i class="fab fa-github"></i> View Beta on GitHub</a><br>
+        <strong>Usage Instructions:</strong> <a href="https://bryyce19.github.io/mxm-contribs/guide.html" target="_blank"><i class="fas fa-book-open"></i> Read Docs</a>
+      </p>
+
+      <button id="continueBtn">Continue to Install</button>
+
+      <div id="completed">
+        <i class="fas fa-check-circle"></i> Successfully installed. You can close this page.
+      </div>
+
+      <div class="footer-buttons">
+        <a href="https://lyricscurators.slack.com/team/U07AV1BPT5J"><i class="fa-brands fa-slack"></i> Contact</a>
+        <a href="https://github.com/bryyce19" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script>
+    const installBtn = document.getElementById('installBtn');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalClose = document.getElementById('modalClose');
+    const continueBtn = document.getElementById('continueBtn');
+    const completed = document.getElementById('completed');
+    const tmStatus = document.getElementById('tmStatus');
+
+    installBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+      fetch('https://script.google.com/macros/s/AKfycbwU6mUTl9-UhRaHlTjkfTcETOAlJELx-q2jgDaVFKGluhtw7AS_1SxY50v1t1pa844Hcg/exec', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event: 'Beta install clicked',
+          userAgent: navigator.userAgent
+        })
+      }).then(res => res.json())
+        .then(data => console.log('Logged:', data))
+        .catch(err => console.error('Fetch error:', err));
+      
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#FF5228', '#000000', '#FF7F50']
+      });
+
+      modalOverlay.style.display = 'flex';
+
+      if (typeof GM_info !== 'undefined') {
+        tmStatus.className = 'success';
+        tmStatus.innerHTML = '<i class="fas fa-check-circle"></i> Tampermonkey detected!';
+      } else {
+        tmStatus.className = 'alert';
+        tmStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> You must have <strong>Tampermonkey</strong> installed! <a href="https://www.tampermonkey.net/" target="_blank">Get it here</a>';
+      }
+    });
+
+    modalClose.addEventListener('click', () => {
+      modalOverlay.style.display = 'none';
+    });
+
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
+        modalOverlay.style.display = 'none';
+      }
+    });
+
+    continueBtn.addEventListener('click', () => {
+      completed.style.display = 'block';
+      setTimeout(() => {
+        window.open("https://github.com/bryyce19/mxm-contribs/raw/beta/Musixmatch-Contributor-Viewer.user.js", "_blank");
+      }, 100);
+    });
+  </script>
+
+</body>
+</html>
