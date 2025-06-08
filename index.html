@@ -14,9 +14,28 @@
       padding: 40px;
     }
 
-    img {
-      max-width: 300px;
-      margin-bottom: 40px;
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .header img {
+      max-height: 60px;
+    }
+
+    .header-icons a {
+      font-size: 22px;
+      color: #333;
+      margin-left: 16px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .header-icons a:hover {
+      color: #FF5228;
+      transition: color 0.25s ease;
     }
 
     h1 {
@@ -61,7 +80,6 @@
       color: #FF5228;
     }
 
-    /* Modal Styles */
     #modalOverlay {
       position: fixed;
       top: 0; left: 0;
@@ -114,10 +132,6 @@
       text-decoration: none;
     }
 
-    #modalContent a:visited {
-      color: #FF5228;
-    }
-
     #modalClose {
       position: absolute;
       top: 12px;
@@ -146,7 +160,6 @@
 
     .alert a {
       color: #FF5228;
-      text-decoration: underline;
     }
 
     .success {
@@ -169,7 +182,7 @@
       cursor: pointer;
       width: 100%;
       text-align: center;
-      transition: background-color 0.3s ease, transform 0.2s ease;
+      transition: background-color  0.3s ease, transform 0.2s ease;
     }
 
     #continueBtn:hover {
@@ -213,30 +226,153 @@
     #completed i {
       margin-right: 6px;
     }
+
+    .alt-options {
+      max-width: 500px;
+      margin: 60px auto 20px;
+      padding: 25px 30px;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+      border: 1px solid #ddd;
+    }
+
+    .alt-options h2 {
+      margin-top: 0;
+      font-size: 22px;
+      color: #333;
+    }
+
+    .alt-options p {
+      color: #666;
+      font-size: 15px;
+      margin-bottom: 20px;
+    }
+
+    .option-buttons {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .option-buttons .button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      padding: 12px 20px;
+      text-decoration: none;
+    }
+
+    .button.update {
+      background-color: #28a745;
+    }
+
+    .button.update:hover {
+      background-color: #219638;
+    }
+
+    .button.beta {
+      background-color: #0056b3;
+      position: relative;
+    }
+
+    .button.beta:hover {
+      background-color: #004095;
+    }
+
+    .button.beta::after {
+      content: "Caution: This is a beta version!";
+      position: absolute;
+      bottom: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: #fff;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 4px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+
+    .button.beta:hover::after {
+      opacity: 1;
+    }
+
+    /* 3D Tilt Styles */
+    .tilt-card {
+      perspective: 1000px;
+      transform-style: preserve-3d;
+      transition: transform 0.2s ease;
+      will-change: transform;
+    }
+
+    .tilt-inner {
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.2s ease;
+      will-change: transform;
+    }
+
+    .tilt-card img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 <body>
 
-  <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Musixmatch-logo-panoramic-Brand.png" alt="Musixmatch Logo"/>
+  <div class="header">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Musixmatch-logo-panoramic-Brand.png" alt="Musixmatch Logo">
+    <div class="header-icons">
+      <a href="https://github.com/bryyce19" target="_blank"><i class="fab fa-github"></i></a>
+      <a href="https://lyricscurators.slack.com/team/U07AV1BPT5J" target="_blank"><i class="fab fa-slack"></i></a>
+    </div>
+  </div>
 
   <h1>Install the Musixmatch Contributor Viewer</h1>
   <p>Click below to install or update to the latest version of the script.</p>
+  <a class="button" id="installBtn" href="#">Install Script</a>
 
-  <a class="button" id="installBtn" href="#">
-    Install Script
-  </a>
+  <div style="margin: 50px auto 30px; max-width: 600px;">
+    <div class="tilt-card">
+      <div class="tilt-inner">
+        <img src="https://i.ibb.co/sd9dwRrK/image.png" alt="Script Example">
+      </div>
+    </div>
+    <p style="font-size: 14px; color: #777; margin-top: 10px;">The script shown within the studio</p>
+  </div>
 
+  <section class="alt-options">
+    <h2>More Options</h2>
+    <p>You can update your script or try the beta version below</p>
+    <div class="option-buttons">
+      <a class="button update" href="https://github.com/bryyce19/mxm-contribs/raw/refs/heads/main/Musixmatch-Contributor-Viewer.user.js" target="_blank">
+        <i class="fas fa-arrow-up"></i> Update Script
+      </a>
+      <a class="button beta" href="https://bryyce19.github.io/mxm-contribs/beta" target="_blank">
+        <i class="fas fa-flask"></i> Try Beta
+      </a>
+    </div>
+  </section>
+  
   <div class="note">
-    <p>This script is not endorsed by or affilated with Musixmatch in any way.</p>
+    <p>This script is not endorsed by or affiliated with Musixmatch in any way.</p>
   </div>
 
   <div id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc">
     <div id="modalContent">
       <div id="modalClose" aria-label="Close modal">&times;</div>
       <h2 id="modalTitle">About the Contributor Viewer</h2>
-
       <p id="modalDesc">
-        This script helps you view contributors on Musixmatch with filters and enhanced info.
+        An unofficial contributor viewer that adds filters, overwrite permission info, Slack links and other tools directly into the studio to make contributor data easier and more accessible.
       </p>
 
       <div id="tmStatus" class="alert">
@@ -272,20 +408,18 @@
 
     installBtn.addEventListener('click', (event) => {
       event.preventDefault();
-      
-      // Log click to Google Sheets
+
       fetch('https://script.google.com/macros/s/AKfycbwU6mUTl9-UhRaHlTjkfTcETOAlJELx-q2jgDaVFKGluhtw7AS_1SxY50v1t1pa844Hcg/exec', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            event: 'Install button clicked',
-            userAgent: navigator.userAgent
+        body: JSON.stringify({
+          event: 'Install button clicked',
+          userAgent: navigator.userAgent
         })
-      })
-      .then(res => res.json())
-      .then(data => console.log('Logged:', data))
-      .catch(err => console.error('Fetch error:', err));
-      
+      }).then(res => res.json())
+        .then(data => console.log('Logged:', data))
+        .catch(err => console.error('Fetch error:', err));
+
       confetti({
         particleCount: 100,
         spread: 70,
@@ -294,7 +428,6 @@
       });
       modalOverlay.style.display = 'flex';
 
-      // Detect Tampermonkey
       if (typeof GM_info !== 'undefined') {
         tmStatus.className = 'success';
         tmStatus.innerHTML = '<i class="fas fa-check-circle"></i> Tampermonkey detected!';
@@ -316,10 +449,28 @@
 
     continueBtn.addEventListener('click', () => {
       completed.style.display = 'block';
-      // Redirect after short delay
       setTimeout(() => {
         window.open("https://github.com/bryyce19/mxm-contribs/raw/refs/heads/main/Musixmatch-Contributor-Viewer.user.js", "_blank");
       }, 100);
+    });
+
+    // js 3d tilt on img
+    const tiltCard = document.querySelector('.tilt-card');
+    const tiltInner = tiltCard.querySelector('.tilt-inner');
+
+    tiltCard.addEventListener('mousemove', e => {
+      const { left, top, width, height } = tiltCard.getBoundingClientRect();
+      const x = e.clientX - left - width / 2;
+      const y = e.clientY - top - height / 2;
+
+      const rotateX = (-y / height) * 20;
+      const rotateY = (x / width) * 20;
+
+      tiltInner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    });
+
+    tiltCard.addEventListener('mouseleave', () => {
+      tiltInner.style.transform = 'rotateX(0deg) rotateY(0deg)';
     });
   </script>
 
