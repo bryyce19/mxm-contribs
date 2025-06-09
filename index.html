@@ -32,23 +32,41 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 30px;
+      padding: 0 20px;
+      flex-wrap: wrap;
+      gap: 16px;
     }
 
     .header img {
       max-height: 60px;
+      max-width: 200px;
+      width: auto;
+      height: auto;
     }
 
-    .header-icons a {
-      font-size: 22px;
+    .header-links {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-link {
+      font-size: 20px;
       color: #333;
-      margin-left: 16px;
       text-decoration: none;
       cursor: pointer;
+      transition: all 0.2s ease;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
     }
 
-    .header-icons a:hover {
+    .header-link:hover {
       color: #FF5228;
-      transition: color 0.25s ease;
+      background: rgba(255, 82, 40, 0.1);
     }
 
     h1 {
@@ -338,17 +356,171 @@
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
+
+    /* Three-dot menu styles */
+    .menu-container {
+      position: relative;
+    }
+
+    .menu-popup {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      padding: 8px;
+      min-width: 200px;
+      opacity: 0;
+      transform: translateY(-10px);
+      pointer-events: none;
+      transition: all 0.2s ease;
+      z-index: 1000;
+    }
+
+    .menu-popup.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      color: #333;
+      text-decoration: none;
+      font-size: 13px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .menu-item:hover {
+      background-color: rgba(255, 82, 40, 0.1);
+      color: #FF5228;
+    }
+
+    .menu-item i {
+      margin-right: 12px;
+      width: 16px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .menu-divider {
+      height: 1px;
+      background-color: #eee;
+      margin: 8px 0;
+    }
+
+    .menu-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .menu-trigger:hover {
+      background: rgba(255, 82, 40, 0.1);
+    }
+
+    /* Mobile  Styles */
+    @media screen and (max-width: 480px) {
+      .header {
+        padding: 0 12px;
+        margin-bottom: 20px;
+      }
+
+      .header img {
+        max-height: 40px;
+      }
+
+      .header-link {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+      }
+
+      .menu-popup {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 3px;
+        right: 3px;
+        border-radius: 10px 10px 0 0;
+        transform: translateY(100%);
+        padding: 8px 16px 16px;
+      }
+
+      .menu-popup::before {
+        content: '';
+        display: block;
+        width: 40px;
+        height: 4px;
+        background: #ddd;
+        border-radius: 2px;
+        margin: 8px auto 16px;
+      }
+
+      .menu-popup.active {
+        transform: translateY(0);
+      }
+
+      .menu-item {
+        padding: 16px;
+        font-size: 15px;
+      }
+
+      .menu-item i {
+        font-size: 16px;
+      }
+
+      /* Add backdrop when menu is open on mobile */
+      .menu-backdrop {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+      }
+
+      .menu-backdrop.active {
+        display: block;
+      }
+    }
   </style>
 </head>
 <body>
 
   <div class="header">
     <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Musixmatch-logo-panoramic-Brand.png" alt="Musixmatch Logo">
-    <div class="header-icons">
-      <a href="https://github.com/bryyce19" target="_blank"><i class="fab fa-github"></i></a>
-      <a href="https://lyricscurators.slack.com/team/U07AV1BPT5J" target="_blank"><i class="fab fa-slack"></i></a>
+    <div class="header-links">
+      <a href="https://github.com/bryyce19" target="_blank" title="GitHub" class="header-link"><i class="fab fa-github"></i></a>
+      <a href="https://lyricscurators.slack.com/team/U07AV1BPT5J" target="_blank" title="Slack" class="header-link"><i class="fab fa-slack"></i></a>
+      <div class="menu-container">
+        <a class="header-link menu-trigger" href="#" id="menuTrigger" title="More options"><i class="fas fa-ellipsis-v"></i></a>
+        <div class="menu-popup" id="menuPopup">
+          <a href="https://bryyce19.github.io/mxm-contribs/changelog.html" class="menu-item" target="_blank">
+            <i class="fas fa-history"></i> Changelog
+          </a>
+          <div class="menu-divider"></div>
+          <a href="https://bryyce19.github.io/mxm-contribs/bugs.html" class="menu-item" target="_blank">
+            <i class="fas fa-bug"></i> Known Bugs
+          </a>
+        </div>
+      </div>
     </div>
   </div>
+
+  <div class="menu-backdrop" id="menuBackdrop"></div>
 
   <h1>Install the Musixmatch Contributor Viewer</h1>
   <p>Click below to install or update to the latest version of the script.</p>
@@ -470,6 +642,31 @@
     // js 3d tilt on img
     const tiltCard = document.querySelector('.tilt-card');
     const tiltInner = tiltCard.querySelector('.tilt-inner');
+
+    // Menu functionality
+    const menuTrigger = document.getElementById('menuTrigger');
+    const menuPopup = document.getElementById('menuPopup');
+    const menuBackdrop = document.getElementById('menuBackdrop');
+
+    menuTrigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      menuPopup.classList.toggle('active');
+      menuBackdrop.classList.toggle('active');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!menuTrigger.contains(e.target) && !menuPopup.contains(e.target)) {
+        menuPopup.classList.remove('active');
+        menuBackdrop.classList.remove('active');
+      }
+    });
+
+    // Close menu when clicking backdrop
+    menuBackdrop.addEventListener('click', () => {
+      menuPopup.classList.remove('active');
+      menuBackdrop.classList.remove('active');
+    });
 
     tiltCard.addEventListener('mousemove', e => {
       const { left, top, width, height } = tiltCard.getBoundingClientRect();
