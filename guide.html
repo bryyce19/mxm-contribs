@@ -1,183 +1,805 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Musixmatch Contributor Viewer — User Guide</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <style>
-    :root {
-      --accent: #FF5228;
-      --highlight: #FFA500;
-      --bg-dark: #121212;
-      --bg-card: #1e1e1e;
-      --text-light: #f0f0f0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musixmatch Contributor Viewer - Documentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="https://em-content.zobj.net/source/apple/419/busts-in-silhouette_1f465.png">
 
-    * {
-      box-sizing: border-box;
-    }
+  <!-- Open Graph meta tags -->
+  <meta property="og:title" content="Musixmatch Contributor Viewer Docs">
+  <meta property="og:description" content="Learn how to enhance Musixmatch Studio with contributor tools, filters, and more.">
+  <meta property="og:image" content="https://i.ibb.co/sd9dwRrK/image.png">
+  <meta property="og:url" content="https://bryyce19.github.io/mxm-contribs/">
+  <meta property="og:type" content="website">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Musixmatch Contributor Viewer Docs">
+  <meta name="twitter:description" content="Learn how to enhance Musixmatch Studio with contributor filters, permissions, and extras.">
+  <meta name="twitter:image" content="https://i.ibb.co/sd9dwRrK/image.png">
+    <style>
+        :root {
+            --primary: #FF5228;
+            --primary-light: #f86f4e;
+            --text: #333;
+            --text-light: #555;
+            --bg: #f9f9f9;
+            --bg-alt: #ffffff;
+            --border: #ddd;
+            --code-bg: #f1f3f5;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --radius: 8px;
+            --highlight: rgba(255, 82, 40, 0.1);
+        }
 
-    body {
-      margin: 0;
-      padding: 40px 20px;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg-dark);
-      color: var(--text-light);
-      line-height: 1.7;
-      animation: fadeIn 1s ease-in;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    @keyframes fadeIn {
-      0% { opacity: 0; transform: translateY(10px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+        }
 
-    h1, h2, h3 {
-      color: var(--accent);
-      margin-top: 30px;
-      animation: slideIn 0.8s ease-in-out;
-    }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
 
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-10px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
+        header {
+            background: var(--bg-alt);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
 
-    a {
-      color: #FF7F50;
-      text-decoration: none;
-      transition: color 0.3s;
-    }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
 
-    a:hover {
-      text-decoration: underline;
-      color: #ffa07a;
-    }
+        .logo {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.2s ease;
+        }
 
-    .section {
-      margin-bottom: 50px;
-      background-color: #1a1a1a;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
-      transition: transform 0.3s ease, background 0.3s ease;
-    }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
 
-    .section:hover {
-      transform: translateY(-4px);
-      background-color: #222;
-    }
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+        }
 
-    ul, ol {
-      padding-left: 20px;
-    }
+        .nav-links a:hover {
+            color: var(--primary);
+            background: var(--highlight);
+        }
 
-    .icon-img {
-      vertical-align: text-bottom;
-      width: 18px;
-    }
+        .header-icons {
+            display: flex;
+            gap: 1rem;
+            margin-left: 2rem;
+        }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
+        .header-icons a {
+            color: var(--text);
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+            padding: 0.5rem;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    th, td {
-      padding: 12px;
-      border: 1px solid #333;
-      text-align: left;
-    }
+        .header-icons a:hover {
+            color: var(--primary);
+            background: var(--highlight);
+            transform: translateY(-2px);
+        }
 
-    th {
-      background-color: var(--bg-card);
-    }
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+            background: var(--bg-alt);
+            border-radius: var(--radius);
+            margin: 2rem 0;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
 
-    td {
-      background-color: #1a1a1a;
-    }
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
 
-    .highlight {
-      color: var(--highlight);
-      font-weight: bold;
-    }
-  </style>
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            position: relative;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            position: relative;
+            animation: fadeInUp 0.5s ease 0.1s backwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            aspect-ratio: 16/9;
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .video-placeholder i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .install-steps {
+            background: var(--bg-alt);
+            padding: 2rem;
+            border-radius: var(--radius);
+            margin: 2rem 0;
+            border: 1px solid var(--border);
+        }
+
+        .install-steps h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .install-steps ol {
+            counter-reset: item;
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .install-steps ol li {
+            counter-increment: item;
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .install-steps ol li::before {
+            content: counter(item) ".";
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .install-button {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .install-button:hover {
+            background: var(--primary-light);
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(255, 82, 40, 0.2);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature-card {
+            background: var(--bg-alt);
+            padding: 2.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: all 0.2s ease;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--highlight);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover i {
+            transform: scale(1.1);
+        }
+
+        .feature-card h3 {
+            margin-bottom: 1rem;
+            color: var(--text);
+            position: relative;
+            font-size: 1.4rem;
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+            position: relative;
+            line-height: 1.7;
+        }
+
+        .section {
+            margin: 4rem 0;
+            background: var(--bg-alt);
+            padding: 3rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .section:hover::before {
+            opacity: 1;
+        }
+
+        .section h2 {
+            color: var(--primary);
+            margin-bottom: 2rem;
+            font-size: 2.2rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--primary);
+            transition: width 0.2s ease;
+        }
+
+        .section:hover h2::after {
+            width: 100%;
+        }
+
+        .section p, .section li {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .section ul, .section ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section li {
+            margin-bottom: 0.8rem;
+        }
+
+        .permission-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 2rem 0;
+            background: var(--bg-alt);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .permission-table th,
+        .permission-table td {
+            padding: 1.2rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .permission-table th {
+            background: var(--bg);
+            font-weight: 600;
+            color: var(--text);
+            font-size: 1.1rem;
+        }
+
+        .permission-table tr {
+            transition: all 0.2s ease;
+        }
+
+        .permission-table tr:hover {
+            background: var(--highlight);
+        }
+
+        .permission-table td:first-child {
+            font-size: 1.2rem;
+        }
+
+        .cta {
+            text-align: center;
+            margin: 5rem 0;
+            position: relative;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 1.2rem 2.5rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .cta-button:hover {
+            background: var(--primary-light);
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(255, 82, 40, 0.2);
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+            background: var(--bg-alt);
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+        }
+
+        footer a:hover {
+            color: var(--primary-light);
+            background: var(--highlight);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 3rem 0;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .section {
+                padding: 2rem;
+            }
+
+            .feature-card {
+                padding: 2rem;
+            }
+        }
+
+        /* Code block styling */
+        .code-block {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border: 1px solid var(--border);
+        }
+
+        .code-block pre {
+            margin: 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* List styling */
+        .section ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .section ul li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .section ul li::before {
+            content: '•';
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .section ol {
+            counter-reset: item;
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .section ol li {
+            counter-increment: item;
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .section ol li::before {
+            content: counter(item) ".";
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .install-steps ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .install-steps ul li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .install-steps ul li::before {
+            content: '•';
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .install-steps ol {
+            counter-reset: item;
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .install-steps ol li {
+            counter-increment: item;
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .install-steps ol li::before {
+            content: counter(item) ".";
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .contact-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-icons a {
+            color: var(--text);
+            font-size: 1.5rem;
+            transition: all 0.2s ease;
+            padding: 0.5rem;
+            border-radius: 50%;
+            background: var(--bg-alt);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contact-icons a:hover {
+            color: var(--primary);
+            background: var(--highlight);
+            transform: translateY(-3px);
+        }
+    </style>
 </head>
 <body>
-  <h1>Musixmatch Contributor Viewer — User Guide</h1>
+    <header>
+        <nav>
+            <a href="/" class="logo">
+                <span style="font-size: 1.4rem;">👥</span>
+                Musixmatch Contributor Viewer
+            </a>
+            <div class="nav-links">
+                <a href="https://bryyce19.github.io/mxm-contribs/">Home</a>
+                <a href="/guide">Changelog</a>
+                <a href="https://github.com/bryyce19/changelog" target="_blank">GitHub</a>
+                <div class="header-icons">
+                    <a href="https://github.com/bryyce19/mxm-contribs" target="_blank" title="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://lyricscurators.slack.com/team/U07AV1BPT5J" target="_blank" title="Slack">
+                        <i class="fab fa-slack"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
 
-  <div class="section">
-    <h2>Video Tutorial</h2>
-    <p>If you prefer to watch visually, take a look at the video below.</p>
-    <iframe src="https://drive.google.com/file/d/1PFyknYlxftZfuOzxuwdp8899dxYTRB9w/preview" width="640" height="480"></iframe>
-  </div>
-  
-  <div class="section">
-    <h2>Step 1: Install the Script</h2>
-    <ol>
-      <li>Go to the install website: <a href="https://bryyce19.github.io/mxm-contribs/" target="_blank">bryyce19.github.io/mxm-contribs</a></li>
-      <li>Click the <strong>Install Script</strong> button.</l>
-      <li>Once installed, you’re ready to use the script on <strong>Musixmatch</strong>.</li>
-    </ol>
-  </div>
+    <div class="container">
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Musixmatch Contributor Viewer</h1>
+                <p>A tool for viewing contributor information within Musixmatch Studio</p>
+                <div class="video-container">
+                    <iframe
+                        width="100%"
+                        height="100%"
+                        src="https://www.youtube.com/embed/"
+                        title="Musixmatch Contributor Viewer Tutorial"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+        </section>
 
-  <div class="section">
-    <h2>Step 2: Using the Script</h2>
-    <h3>Where to Start</h3>
-    <p>Navigate to <strong>any mission</strong> or <strong>non-mission lyrics</strong> page on <a href="https://www.musixmatch.com/" target="_blank">musixmatch.com</a>.</p>
+        <section class="section">
+            <h2>Installation</h2>
+            <div class="install-steps">
+                <h3>First, Install Tampermonkey</h3>
+                <ol>
+                    <li>Visit <a href="https://www.tampermonkey.net/" target="_blank">tampermonkey.net</a></li>
+                    <li>Click "Download" and install the extension to your browser</li>
+                    <li>Once installed, pin the extension to your browser toolbar</li>
+                </ol>
 
-    <h3>Accessing Contributor Info</h3>
-    <ol>
-      <li>Click the <img src="https://i.postimg.cc/bw1b5x6c/image.png" alt="info icon" class="icon-img"> icon on the lyrics card.</li>
-      <li>The first time, a new orange button <img src="https://i.postimg.cc/rwG0j8mq/image.png" alt="people icon" class="icon-img"> will appear.</li>
-      <li>Click the button to <strong>load contributors</strong>.</li>
-    </ol>
-  </div>
+                <h3>Next, Install the Script</h3>
+                <ol>
+                    <li>Go to the website: <a href="https://bryyce19.github.io/mxm-contribs" target="_blank">bryyce19.github.io/mxm-contribs</a></li>
+                    <li>Click the Install Script button</li>
+                    <li>Once installed, you're ready to use the script</li>
+                </ol>
+            </div>
+        </section>
 
-  <div class="section">
-    <h2>Features & Filters</h2>
+        <section class="section">
+            <h2>Using the Script</h2>
+            
+            <h3>To Start</h3>
+            <p>Navigate to any mission or non-mission studio page on musixmatch.com.</p>
 
-    <h3>Filter by Edit Type</h3>
-    <p>Filter contributors by <strong>edit type</strong> (currently lyrics and tagging).</p>
+            <h3>Accessing Contributor Info</h3>
+            <ol>
+                <li>Click the info icon in the studio</li>
+                <li>The first time, a new button (people emoji) will appear in the bottom left</li>
+                <li>Click the button to load contributors</li>
+            </ol>
+        </section>
+      
+        <section class="section">
+            <h2>Contributor Roles</h2>
+            <table class="permission-table">
+                <thead>
+                    <tr>
+                        <th>Icon</th>
+                        <th>Role</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><img src="https://github.com/bryyce19/mxm-contribs/blob/main/spec1.png?raw=true" alt="Specialist" style="width: 20px; height: 20px;"></td>
+                        <td>Specialist</td>
+                    </tr>
+                    <tr>
+                        <td><img src="https://github.com/bryyce19/mxm-contribs/blob/main/curator1.png?raw=true" alt="Curator" style="width: 20px; height: 20px;"></td>
+                        <td>Curator</td>
+                    </tr>
+                    <tr>
+                        <td><img src="https://github.com/bryyce19/mxm-contribs/blob/main/grad1.png?raw=true" alt="Graduate/Rookie" style="width: 20px; height: 20px;"></td>
+                        <td>Graduate/Rookie</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
 
-    <h3>Recent Contributor Highlight</h3>
-    <p>The <span class="highlight">orange-colored name</span> indicates the <strong>most recent contributor</strong>.</p>
+        <section class="section">
+            <h2>User Interface Controls</h2>
+            <ul>
+                <li><strong>Theme Toggle</strong> (🌗): Top right corner, switch between dark/light mode</li>
+                <li><strong>Close Viewer</strong> (✖): Click the X icon at the top right</li>
+                <li><strong>Scroll Arrows</strong> (⬆⬇): Use if scroll bar fails (known bug)</li>
+            </ul>
+        </section>
 
-    <h3>Contributor Roles</h3>
-    <table>
-      <thead>
-        <tr><th>Icon</th><th>Role</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><img src="https://github.com/bryyce19/mxm-contribs/blob/main/spec1.png?raw=true" alt="Specialist" class="icon-img"></td>
-          <td>Specialist</td>
-        </tr>
-        <tr>
-          <td><img src="https://github.com/bryyce19/mxm-contribs/blob/main/curator1.png?raw=true" alt="Curator" class="icon-img"></td>
-          <td>Curator</td>
-        </tr>
-        <tr>
-          <td><img src="https://github.com/bryyce19/mxm-contribs/blob/main/grad1.png?raw=true" alt="Graduate/Rookie" class="icon-img"></td>
-          <td>Graduate/Rookie</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+        <section class="section">
+            <h2>Warnings & Errors</h2>
+            <p>The viewer only works on valid studio pages. If the script detects an unsupported page, an error will appear.</p>
+        </section>
 
-  <div class="section">
-    <h2>User Interface Controls</h2>
-    <ul>
-      <li><img src="https://i.postimg.cc/P56L9Sm7/image.png" alt="Moon icon" class="icon-img"> <strong>Theme Toggle</strong>: Top right corner, switch between dark/light mode.</li>
-      <li><strong>Close Viewer</strong>: Click the X icon at the top right.</li>
-      <li><img src="https://i.postimg.cc/kXqB50sZ/image.png" alt="Scroll arrows" class="icon-img"> <strong>Manual Scroll</strong>: Use if scroll bar fails (known bug).</li>
-    </ul>
-  </div>
+        <section class="section">
+            <h2>Permission Types</h2>
+            <table class="permission-table">
+                <thead>
+                    <tr>
+                        <th>Icon</th>
+                        <th>Permission</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>🔓</td>
+                        <td>Allows overwrites</td>
+                        <td>Contributor allows their work to be overwritten</td>
+                    </tr>
+                    <tr>
+                        <td>🙋‍🔒</td>
+                        <td>Ask before overwriting</td>
+                        <td>Contact contributor before making changes</td>
+                    </tr>
+                    <tr>
+                        <td>🔒</td>
+                        <td>Does not allow overwrites</td>
+                        <td>Contributor's work should not be overwritten</td>
+                    </tr>
+                    <tr>
+                        <td>🛠️</td>
+                        <td>Staff discretion</td>
+                        <td>Use your judgement for overwrites</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
 
-  <div class="section">
-    <h2>Warnings & Errors</h2>
-    <p>The viewer only works on valid <strong>tool/mission pages</strong>. If the script detects an unsupported page, an error will appear.</p>
-  </div>
+    <footer>
+        <div class="contact-icons">
+            <a href="https://github.com/bryyce19/mxm-contribs" target="_blank" title="GitHub">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="https://lyricscurators.slack.com/team/U07AV1BPT5J" target="_blank" title="Slack">
+                <i class="fab fa-slack"></i>
+            </a>
+    </footer>
 </body>
 </html>
