@@ -1,839 +1,601 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Musixmatch Contributor Viewer - Documentation</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="icon" type="image/x-icon" href="https://em-content.zobj.net/source/apple/419/busts-in-silhouette_1f465.png">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Musixmatch Contributor Viewer - Documentation</title>
+  
   <!-- Open Graph meta tags -->
-  <meta property="og:title" content="Musixmatch Contributor Viewer Docs">
+  <meta property="og:title" content="Musixmatch Contributor Viewer - Documentation">
   <meta property="og:description" content="Learn how to enhance Musixmatch Studio with contributor tools, filters, and more.">
-  <meta property="og:image" content="https://i.ibb.co/sd9dwRrK/image.png">
-  <meta property="og:url" content="https://bryyce19.github.io/mxm-contribs/">
+  <meta property="og:image" content="https://i.ibb.co/qMXNXW4n/image.png">
+  <meta property="og:url" content="https://bryyce19.github.io/mxm-contribs/guide">
   <meta property="og:type" content="website">
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Musixmatch Contributor Viewer Docs">
-  <meta name="twitter:description" content="Learn how to enhance Musixmatch Studio with contributor filters, permissions, and extras.">
-  <meta name="twitter:image" content="https://i.ibb.co/sd9dwRrK/image.png">
-    <style>
-        :root {
-            --primary: #FF5228;
-            --primary-light: #f86f4e;
-            --text: #333;
-            --text-light: #555;
-            --bg: #f9f9f9;
-            --bg-alt: #ffffff;
-            --border: #ddd;
-            --code-bg: #f1f3f5;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --radius: 8px;
-            --highlight: rgba(255, 82, 40, 0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text);
-            background: var(--bg);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        header {
-            background: var(--bg-alt);
-            border-bottom: 1px solid var(--border);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .logo {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: var(--primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: transform 0.2s ease;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: var(--text);
-            text-decoration: none;
-            transition: all 0.2s ease;
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius);
-        }
-
-        .nav-links a:hover {
-            color: var(--primary);
-            background: var(--highlight);
-        }
-
-        .header-icons {
-            display: flex;
-            gap: 1rem;
-            margin-left: 2rem;
-        }
-
-        .header-icons a {
-            color: var(--text);
-            font-size: 1.2rem;
-            transition: all 0.2s ease;
-            padding: 0.5rem;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .header-icons a:hover {
-            color: var(--primary);
-            background: var(--highlight);
-            transform: translateY(-2px);
-        }
-
-        .hero {
-            text-align: center;
-            padding: 3rem 0;
-            background: var(--bg-alt);
-            border-radius: var(--radius);
-            margin: 2rem 0;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-content {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--primary);
-            position: relative;
-            animation: fadeInUp 0.5s ease;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            color: var(--text-light);
-            margin-bottom: 2rem;
-            position: relative;
-            animation: fadeInUp 0.5s ease 0.1s backwards;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .video-container {
-            position: relative;
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            background: var(--bg);
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            aspect-ratio: 16/9;
-        }
-
-        .video-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg);
-            color: var(--text-light);
-            font-size: 1.1rem;
-        }
-
-        .video-placeholder i {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        .install-steps {
-            background: var(--bg-alt);
-            padding: 2rem;
-            border-radius: var(--radius);
-            margin: 2rem 0;
-            border: 1px solid var(--border);
-        }
-
-        .install-steps h3 {
-            color: var(--primary);
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
-        }
-
-        .install-steps ol {
-            counter-reset: item;
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .install-steps ol li {
-            counter-increment: item;
-            position: relative;
-            padding-left: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .install-steps ol li::before {
-            content: counter(item) ".";
-            color: var(--primary);
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-        }
-
-        .install-button {
-            display: inline-block;
-            background: var(--primary);
-            color: white;
-            padding: 0.8rem 1.5rem;
-            border-radius: var(--radius);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
-        }
-
-        .install-button:hover {
-            background: var(--primary-light);
-            transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(255, 82, 40, 0.2);
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-
-        .feature-card {
-            background: var(--bg-alt);
-            padding: 2.5rem;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            transition: all 0.2s ease;
-            border: 1px solid var(--border);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--highlight);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-        }
-
-        .feature-card:hover::before {
-            opacity: 1;
-        }
-
-        .feature-card i {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 1.5rem;
-            position: relative;
-            transition: transform 0.3s ease;
-        }
-
-        .feature-card:hover i {
-            transform: scale(1.1);
-        }
-
-        .feature-card h3 {
-            margin-bottom: 1rem;
-            color: var(--text);
-            position: relative;
-            font-size: 1.4rem;
-        }
-
-        .feature-card p {
-            color: var(--text-light);
-            position: relative;
-            line-height: 1.7;
-        }
-
-        .section {
-            margin: 4rem 0;
-            background: var(--bg-alt);
-            padding: 3rem;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--primary-light));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .section:hover::before {
-            opacity: 1;
-        }
-
-        .section h2 {
-            color: var(--primary);
-            margin-bottom: 2rem;
-            font-size: 2.2rem;
-            position: relative;
-            display: inline-block;
-        }
-
-        .section h2::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 0;
-            width: 40px;
-            height: 3px;
-            background: var(--primary);
-            transition: width 0.2s ease;
-        }
-
-        .section:hover h2::after {
-            width: 100%;
-        }
-
-        .section p, .section li {
-            color: var(--text-light);
-            font-size: 1.1rem;
-            line-height: 1.8;
-            margin-bottom: 1rem;
-        }
-
-        .section ul, .section ol {
-            margin-left: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .section li {
-            margin-bottom: 0.8rem;
-        }
-
-        .permission-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin: 2rem 0;
-            background: var(--bg-alt);
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-
-        .permission-table th,
-        .permission-table td {
-            padding: 1.2rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .permission-table th {
-            background: var(--bg);
-            font-weight: 600;
-            color: var(--text);
-            font-size: 1.1rem;
-        }
-
-        .permission-table tr {
-            transition: all 0.2s ease;
-        }
-
-        .permission-table tr:hover {
-            background: var(--highlight);
-        }
-
-        .permission-table td:first-child {
-            font-size: 1.2rem;
-        }
-
-        .cta {
-            text-align: center;
-            margin: 5rem 0;
-            position: relative;
-        }
-
-        .cta-button {
-            display: inline-block;
-            background: var(--primary);
-            color: white;
-            padding: 1.2rem 2.5rem;
-            border-radius: var(--radius);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.2),
-                transparent
-            );
-            transition: 0.5s;
-        }
-
-        .cta-button:hover {
-            background: var(--primary-light);
-            transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(255, 82, 40, 0.2);
-        }
-
-        .cta-button:hover::before {
-            left: 100%;
-        }
-
-        footer {
-            text-align: center;
-            padding: 3rem;
-            color: var(--text-light);
-            border-top: 1px solid var(--border);
-            margin-top: 4rem;
-            background: var(--bg-alt);
-        }
-
-        footer a {
-            color: var(--primary);
-            text-decoration: none;
-            transition: all 0.2s ease;
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius);
-        }
-
-        footer a:hover {
-            color: var(--primary-light);
-            background: var(--highlight);
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .nav-links {
-                display: none;
-            }
-
-            .hero {
-                padding: 3rem 0;
-            }
-
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-
-            .section {
-                padding: 2rem;
-            }
-
-            .feature-card {
-                padding: 2rem;
-            }
-        }
-
-        /* Code block styling */
-        .code-block {
-            background: var(--code-bg);
-            padding: 1.5rem;
-            border-radius: var(--radius);
-            overflow-x: auto;
-            margin: 1.5rem 0;
-            border: 1px solid var(--border);
-        }
-
-        .code-block pre {
-            margin: 0;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-
-        /* List styling */
-        .section ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .section ul li {
-            position: relative;
-            padding-left: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .section ul li::before {
-            content: '•';
-            color: var(--primary);
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-        }
-
-        .section ol {
-            counter-reset: item;
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .section ol li {
-            counter-increment: item;
-            position: relative;
-            padding-left: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .section ol li::before {
-            content: counter(item) ".";
-            color: var(--primary);
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-        }
-
-        .install-steps ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .install-steps ul li {
-            position: relative;
-            padding-left: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .install-steps ul li::before {
-            content: '•';
-            color: var(--primary);
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-        }
-
-        .install-steps ol {
-            counter-reset: item;
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .install-steps ol li {
-            counter-increment: item;
-            position: relative;
-            padding-left: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .install-steps ol li::before {
-            content: counter(item) ".";
-            color: var(--primary);
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-        }
-
-        .contact-icons {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .contact-icons a {
-            color: var(--text);
-            font-size: 1.5rem;
-            transition: all 0.2s ease;
-            padding: 0.5rem;
-            border-radius: 50%;
-            background: var(--bg-alt);
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .contact-icons a:hover {
-            color: var(--primary);
-            background: var(--highlight);
-            transform: translateY(-3px);
-        }
-    </style>
+  <meta name="twitter:title" content="Musixmatch Contributor Viewer - Documentation">
+  <meta name="twitter:description" content="Learn how to enhance Musixmatch Studio with contributor tools, filters, and more.">
+  <meta name="twitter:image" content="https://i.ibb.co/qMXNXW4n/image.png">
+  
+  <link rel="icon" type="image/x-icon" href="https://em-content.zobj.net/source/apple/419/busts-in-silhouette_1f465.png">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f9f9f9;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 0;
+      width: 100%;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .header img {
+      max-height: 60px;
+      max-width: 200px;
+      width: auto;
+      height: auto;
+    }
+
+    .header-links {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .header-link {
+      font-size: 20px;
+      color: #333;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+    }
+
+    .header-link:hover {
+      color: #FF5228;
+      background: rgba(255, 82, 40, 0.1);
+    }
+
+    /* Three-dot menu styles */
+    .menu-container {
+      position: relative;
+    }
+
+    .menu-popup {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      padding: 8px;
+      min-width: 200px;
+      opacity: 0;
+      transform: translateY(-10px);
+      pointer-events: none;
+      transition: all 0.2s ease;
+      z-index: 1000;
+    }
+
+    .menu-popup.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      color: #333;
+      text-decoration: none;
+      font-size: 13px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .menu-item:hover {
+      background-color: rgba(255, 82, 40, 0.1);
+      color: #FF5228;
+    }
+
+    .menu-item i {
+      margin-right: 12px;
+      width: 16px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .menu-divider {
+      height: 1px;
+      background-color: #eee;
+      margin: 8px 0;
+    }
+
+    .menu-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .menu-trigger:hover {
+      background: rgba(255, 82, 40, 0.1);
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 40px;
+    }
+
+    .guide-container {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .section-block {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border: 1px solid #eee;
+      transition: transform 0.2s ease;
+    }
+
+    .section-block:hover {
+      transform: translateY(-2px);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .section-header i {
+      font-size: 24px;
+      color: #FF5228;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+    }
+
+    .section-content {
+      color: #444;
+      line-height: 1.6;
+    }
+
+    .section-content ul, .section-content ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .section-content li {
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .section-content li i {
+      margin-top: 3px;
+      width: 16px;
+      text-align: center;
+    }
+
+    .permission-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 15px 0;
+    }
+
+    .permission-table th,
+    .permission-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    .permission-table th {
+      background: #f9f9f9;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .permission-table tr:hover {
+      background: rgba(255, 82, 40, 0.05);
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #FF5228;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      margin-top: 30px;
+      transition: all 0.2s ease;
+    }
+
+    .back-button:hover {
+      background: #f86f4e;
+      transform: translateY(-2px);
+    }
+
+    .install-button {
+      display: inline-block;
+      background: #FF5228;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      margin: 15px 0;
+      transition: all 0.2s ease;
+    }
+
+    .install-button:hover {
+      background: #f86f4e;
+      transform: translateY(-2px);
+    }
+
+    @media screen and (max-width: 480px) {
+      .header {
+        margin-bottom: 20px;
+      }
+
+      .header img {
+        max-height: 40px;
+        max-width: 150px;
+      }
+
+      .header-links {
+        gap: 8px;
+      }
+
+      .header-link {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+      }
+
+      .section-block {
+        padding: 20px;
+      }
+
+      .section-title {
+        font-size: 18px;
+      }
+
+      .menu-popup {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 3px;
+        right: 3px;
+        border-radius: 10px 10px 0 0;
+        transform: translateY(100%);
+        padding: 8px 16px 16px;
+      }
+
+      .menu-popup::before {
+        content: '';
+        display: block;
+        width: 40px;
+        height: 4px;
+        background: #ddd;
+        border-radius: 2px;
+        margin: 8px auto 16px;
+      }
+
+      .menu-popup.active {
+        transform: translateY(0);
+      }
+
+      .menu-item {
+        padding: 16px;
+        font-size: 15px;
+      }
+
+      .menu-item i {
+        font-size: 16px;
+      }
+
+      .menu-backdrop {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+      }
+
+      .menu-backdrop.active {
+        display: block;
+      }
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <a href="https://bryyce19.github.io/mxm-contribs/guide" class="logo">
-                <span style="font-size: 1.4rem;">👥</span>
-                Musixmatch Contributor Viewer
-            </a>
-            <div class="nav-links">
-                <a href="https://bryyce19.github.io/mxm-contribs/">Home</a>
-                <a href="/guide">Changelog</a>
-                <a href="https://github.com/bryyce19/changelog" target="_blank">GitHub</a>
-                <div class="header-icons">
-                    <a href="https://github.com/bryyce19/mxm-contribs" target="_blank" title="GitHub">
-                        <i class="fab fa-github"></i>
-                    </a>
-                    <a href="https://lyricscurators.slack.com/team/U07AV1BPT5J" target="_blank" title="Slack">
-                        <i class="fab fa-slack"></i>
-                    </a>
-                </div>
-            </div>
-        </nav>
-    </header>
+  <div class="header">
+    <img src="https://images.seeklogo.com/logo-png/52/2/musixmatch-logo-png_seeklogo-523539.png" alt="Musixmatch Logo">
+    <div class="header-links">
+      <a href="https://github.com/bryyce19/mxm-contribs" target="_blank" title="GitHub" class="header-link"><i class="fab fa-github"></i></a>
+      <a href="https://lyricscurators.slack.com/team/U07AV1BPT5J" target="_blank" title="Slack" class="header-link"><i class="fab fa-slack"></i></a>
+      <div class="menu-container">
+        <a class="header-link menu-trigger" href="#" id="menuTrigger" title="More options"><i class="fas fa-ellipsis-v"></i></a>
+        <div class="menu-popup" id="menuPopup">
+          <a href="https://bryyce19.github.io/mxm-contribs/changelog" class="menu-item" target="_blank">
+            <i class="fas fa-history"></i> Changelog
+          </a>
+          <div class="menu-divider"></div>
+          <a href="https://bryyce19.github.io/mxm-contribs/bugs" class="menu-item" target="_blank">
+            <i class="fas fa-bug"></i> Known Bugs
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <div class="container">
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Musixmatch Contributor Viewer</h1>
-                <p>A tool for viewing contributor information within Musixmatch Studio</p>
-                <div class="video-container">
-                    <iframe
-                        width="100%"
-                        height="100%"
-                        src="https://www.youtube.com/embed/"
-                        title="Musixmatch Contributor Viewer Tutorial"
-                        frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen>
-                    </iframe>
-                </div>
-            </div>
-        </section>
+  <div class="menu-backdrop" id="menuBackdrop"></div>
 
-        <section class="section">
-            <h2>Installation</h2>
-            <div class="install-steps">
-                <h3>First, Install Tampermonkey</h3>
-                <ol>
-                    <li>Visit <a href="https://www.tampermonkey.net/" target="_blank">tampermonkey.net</a></li>
-                    <li>Click "Download" and install the extension to your browser</li>
-                    <li>Once installed, pin the extension to your browser toolbar</li>
-                </ol>
+  <h1>Documentation</h1>
 
-                <h3>Next, Install the Script</h3>
-                <ol>
-                    <li>Go to the website: <a href="https://bryyce19.github.io/mxm-contribs" target="_blank">bryyce19.github.io/mxm-contribs</a></li>
-                    <li>Click the Install Script button</li>
-                    <li>Once installed, you're ready to use the script</li>
-                </ol>
-            </div>
-        </section>
+  <div class="guide-container">
+    <div class="section-block">
+      <div class="section-header">
+        <i class="fas fa-download"></i>
+        <h2 class="section-title">Installation</h2>
+      </div>
+      <div class="section-content">
+        <h3>First, Install Tampermonkey</h3>
+        <ol>
+          <li><i class="fas fa-arrow-right"></i> Visit <a href="https://www.tampermonkey.net/" target="_blank">tampermonkey.net</a></li>
+          <li><i class="fas fa-arrow-right"></i> Click "Download" and install the extension to your browser</li>
+          <li><i class="fas fa-arrow-right"></i> Once installed, pin the extension to your browser toolbar</li>
+        </ol>
 
-        <section class="section">
-            <h2>Using the Script</h2>
-            
-            <h3>To Start</h3>
-            <p>Navigate to any mission or non-mission studio page on musixmatch.com.</p>
-
-            <h3>Accessing Contributor Info</h3>
-            <ol>
-                <li>Click the info icon in the studio</li>
-                <li>The first time, a new button (people emoji) will appear in the bottom left</li>
-                <li>Click the button to load contributors</li>
-            </ol>
-
-            <h3>Overwrite Protection</h3>
-            <p>The script now includes an overwrite protection system that:</p>
-            <ul>
-                <li>Automatically detects when you attempt to save changes</li>
-                <li>Shows a confirmation popup if the contributor has specific overwrite preferences</li>
-                <li>Displays detailed contributor information including:
-                    <ul>
-                        <li>Languages they work with</li>
-                        <li>Special notes for each language</li>
-                        <li>Direct links to their Musixmatch profile and Slack</li>
-                    </ul>
-                </li>
-                <li>Requires explicit confirmation before proceeding with overwrites</li>
-            </ul>
-        </section>
-      
-        <section class="section">
-            <h2>Contributor Roles</h2>
-            <table class="permission-table">
-                <thead>
-                    <tr>
-                        <th>Icon</th>
-                        <th>Role</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><img src="https://github.com/bryyce19/mxm-contribs/blob/main/spec1.png?raw=true" alt="Specialist" style="width: 20px; height: 20px;"></td>
-                        <td>Specialist</td>
-                    </tr>
-                    <tr>
-                        <td><img src="https://github.com/bryyce19/mxm-contribs/blob/main/curator1.png?raw=true" alt="Curator" style="width: 20px; height: 20px;"></td>
-                        <td>Curator</td>
-                    </tr>
-                    <tr>
-                        <td><img src="https://github.com/bryyce19/mxm-contribs/blob/main/grad1.png?raw=true" alt="Graduate/Rookie" style="width: 20px; height: 20px;"></td>
-                        <td>Graduate/Rookie</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-
-        <section class="section">
-            <h2>User Interface Controls</h2>
-            <ul>
-                <li><strong>Theme Toggle</strong> (🌗): Top right corner, switch between dark/light mode</li>
-                <li><strong>Close Viewer</strong> (✖): Click the X icon at the top right</li>
-                <li><strong>Scroll Arrows</strong> (⬆⬇): Use if scroll bar fails (known bug)</li>
-                <li><strong>Debug Mode</strong>: Right-click the contributor button to toggle debug mode for troubleshooting</li>
-            </ul>
-        </section>
-
-        <section class="section">
-            <h2>Warnings & Errors</h2>
-            <p>The viewer only works on valid studio pages. If the script detects an unsupported page, an error will appear.</p>
-            <p>When attempting to save changes:</p>
-            <ul>
-                <li>If a contributor has "Ask" permission, you'll see a yellow warning popup</li>
-                <li>If a contributor has "No" permission, you'll see a red warning popup</li>
-                <li>Each popup includes detailed contributor information and requires explicit confirmation</li>
-            </ul>
-        </section>
-
-        <section class="section">
-            <h2>Permission Types</h2>
-            <table class="permission-table">
-                <thead>
-                    <tr>
-                        <th>Icon</th>
-                        <th>Permission</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>🔓</td>
-                        <td>Allows overwrites</td>
-                        <td>Contributor allows their work to be overwritten without confirmation</td>
-                    </tr>
-                    <tr>
-                        <td>🙋‍🔒</td>
-                        <td>Ask before overwriting</td>
-                        <td>Shows a yellow warning popup requiring confirmation before changes</td>
-                    </tr>
-                    <tr>
-                        <td>🔒</td>
-                        <td>Does not allow overwrites</td>
-                        <td>Shows a red warning popup requiring explicit confirmation</td>
-                    </tr>
-                    <tr>
-                        <td>🛠️</td>
-                        <td>Staff discretion</td>
-                        <td>Use your judgement for overwrites, no confirmation required</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-
-        <section class="section">
-            <h2>Contributor Information Display</h2>
-            <p>The overwrite confirmation popup shows detailed contributor information:</p>
-            <ul>
-                <li><strong>Languages</strong>: All languages the contributor works with</li>
-                <li><strong>Notes</strong>: Special instructions or preferences for each language</li>
-                <li><strong>Links</strong>: Quick access to contributor's Musixmatch profile and Slack</li>
-                <li><strong>Permission Status</strong>: Clear visual indication of overwrite permission</li>
-            </ul>
-            <p>The information is automatically loaded when you open a track and is kept up to date as you navigate between tracks.</p>
-        </section>
+        <h3>Next, Install the Script</h3>
+        <ol>
+          <li><i class="fas fa-arrow-right"></i> Go to the website: <a href="https://bryyce19.github.io/mxm-contribs" target="_blank">bryyce19.github.io/mxm-contribs</a></li>
+          <li><i class="fas fa-arrow-right"></i> Click the Install Script button</li>
+          <li><i class="fas fa-arrow-right"></i> Once installed, you're ready to use the script</li>
+        </ol>
+        <a href="https://bryyce19.github.io/mxm-contribs" class="install-button" target="_blank">
+          <i class="fas fa-download"></i> Install Script
+        </a>
+      </div>
     </div>
 
-    <footer>
-        <div class="contact-icons">
-            <a href="https://github.com/bryyce19/mxm-contribs" target="_blank" title="GitHub">
-                <i class="fab fa-github"></i>
-            </a>
-            <a href="https://lyricscurators.slack.com/team/U07AV1BPT5J" target="_blank" title="Slack">
-                <i class="fab fa-slack"></i>
-            </a>
-    </footer>
+    <div class="section-block">
+      <div class="section-header">
+        <i class="fas fa-play"></i>
+        <h2 class="section-title">Getting Started</h2>
+      </div>
+      <div class="section-content">
+        <h3>To Start</h3>
+        <p>Go to any mission or non-mission studio page on musixmatch.com.</p>
+
+        <h3>Seeing Contributor Info</h3>
+        <ol>
+          <li><i class="fas fa-arrow-right"></i> The first time, a new button (people emoji) will appear in the bottom left</li>
+          <li><i class="fas fa-arrow-right"></i> Click the button to show contributors</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-header">
+        <i class="fas fa-shield-alt"></i>
+        <h2 class="section-title">Overwrite Protection</h2>
+      </div>
+      <div class="section-content">
+        <p>The script includes an overwrite protection system that:</p>
+        <ul>
+          <li><i class="fas fa-check"></i> Automatically detects when you attempt to save changes</li>
+          <li><i class="fas fa-check"></i> Shows a confirmation popup if the contributor has specific overwrite preferences</li>
+          <li><i class="fas fa-check"></i> Displays detailed contributor information including:
+            <ul>
+              <li><i class="fas fa-language"></i> Languages they work with</li>
+              <li><i class="fas fa-sticky-note"></i> Special notes for each language</li>
+              <li><i class="fas fa-link"></i> Direct links to their Musixmatch profile and Slack</li>
+            </ul>
+          </li>
+          <li><i class="fas fa-check"></i> Requires explicit confirmation before proceeding with overwrites</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-header">
+        <i class="fas fa-users"></i>
+        <h2 class="section-title">Contributor Roles</h2>
+      </div>
+      <div class="section-content">
+        <table class="permission-table">
+          <thead>
+            <tr>
+              <th>Icon</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><img src="https://github.com/bryyce19/mxm-contribs/blob/main/spec1.png?raw=true" alt="Specialist" style="width: 20px; height: 20px;"></td>
+              <td>Specialist</td>
+            </tr>
+            <tr>
+              <td><img src="https://github.com/bryyce19/mxm-contribs/blob/main/curator1.png?raw=true" alt="Curator" style="width: 20px; height: 20px;"></td>
+              <td>Curator</td>
+            </tr>
+            <tr>
+              <td><img src="https://github.com/bryyce19/mxm-contribs/blob/main/grad1.png?raw=true" alt="Graduate/Rookie" style="width: 20px; height: 20px;"></td>
+              <td>Graduate/Rookie</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-header">
+        <i class="fas fa-sliders-h"></i>
+        <h2 class="section-title">User Interface Controls</h2>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li><strong>Theme Toggle</strong> (🌗): Top right corner, switch between dark/light mode</li>
+          <li><strong>Close Viewer</strong> (✖): Click the X icon at the top right</li>
+          <li><strong>Scroll Arrows</strong> (⬆⬇): Use if scroll bar fails (known bug)</li>
+          <li><strong>Debug Mode</strong> (🟢): Right-click the contributor button to toggle debug mode for troubleshooting</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-header">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h2 class="section-title">Warnings & Errors</h2>
+      </div>
+      <div class="section-content">
+        <p>The viewer only works on valid studio pages. If the script detects an unsupported page, an error will appear.</p>
+        <p>When attempting to save changes:</p>
+        <ul>
+          <li><i class="fas fa-exclamation-circle"></i> If a contributor has "Ask" permission, you'll see a yellow warning popup</li>
+          <li><i class="fas fa-exclamation-circle"></i> If a contributor has "No" permission, you'll see a red warning popup</li>
+          <li><i class="fas fa-exclamation-circle"></i> Each popup includes detailed contributor information and requires explicit confirmation</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-header">
+        <i class="fas fa-key"></i>
+        <h2 class="section-title">Permission Types</h2>
+      </div>
+      <div class="section-content">
+        <table class="permission-table">
+          <thead>
+            <tr>
+              <th>Icon</th>
+              <th>Permission</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>🔓</td>
+              <td>Allows overwrites</td>
+              <td>Contributor allows their work to be overwritten without confirmation</td>
+            </tr>
+            <tr>
+              <td>🙋‍🔒</td>
+              <td>Ask before overwriting</td>
+              <td>Shows a yellow warning popup requiring confirmation before changes</td>
+            </tr>
+            <tr>
+              <td>🔒</td>
+              <td>Does not allow overwrites</td>
+              <td>Shows a red warning popup requiring explicit confirmation</td>
+            </tr>
+            <tr>
+              <td>🛠️</td>
+              <td>Staff discretion</td>
+              <td>Use your judgement for overwrites, no confirmation required</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-header">
+        <i class="fas fa-info-circle"></i>
+        <h2 class="section-title">Contributor Information Display</h2>
+      </div>
+      <div class="section-content">
+        <p>The overwrite confirmation popup shows detailed contributor information:</p>
+        <ul>
+          <li><i class="fas fa-language"></i> <strong>Languages</strong>: All languages the contributor works with</li>
+          <li><i class="fas fa-sticky-note"></i> <strong>Notes</strong>: Special instructions or preferences for each language</li>
+          <li><i class="fas fa-link"></i> <strong>Links</strong>: Access to contributor's Musixmatch profile and Slack</li>
+          <li><i class="fas fa-shield-alt"></i> <strong>Permission Status</strong>: A visual indication of overwrite permission</li>
+        </ul>
+        <p>The information is automatically loaded when you open a track and is kept up to date as you navigate between tracks.</p>
+      </div>
+    </div>
+  </div>
+
+  <a href="index.html" class="back-button">
+    <i class="fas fa-arrow-left"></i>
+    Back to Home
+  </a>
+
+  <div class="note" style="margin-top: 40px; font-size: 12px; color: #666;">
+    <p>This script is not endorsed by or affiliated with Musixmatch in any way.</p>
+  </div>
+
+  <script>
+    // Menu functionality
+    const menuTrigger = document.getElementById('menuTrigger');
+    const menuPopup = document.getElementById('menuPopup');
+    const menuBackdrop = document.getElementById('menuBackdrop');
+
+    menuTrigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      menuPopup.classList.toggle('active');
+      menuBackdrop.classList.toggle('active');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!menuTrigger.contains(e.target) && !menuPopup.contains(e.target)) {
+        menuPopup.classList.remove('active');
+        menuBackdrop.classList.remove('active');
+      }
+    });
+
+    // Close menu when clicking backdrop
+    menuBackdrop.addEventListener('click', () => {
+      menuPopup.classList.remove('active');
+      menuBackdrop.classList.remove('active');
+    });
+  </script>
 </body>
 </html>
