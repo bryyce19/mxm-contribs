@@ -714,6 +714,21 @@
                 <li>The first time, a new button (people emoji) will appear in the bottom left</li>
                 <li>Click the button to load contributors</li>
             </ol>
+
+            <h3>Overwrite Protection</h3>
+            <p>The script now includes an overwrite protection system that:</p>
+            <ul>
+                <li>Automatically detects when you attempt to save changes</li>
+                <li>Shows a confirmation popup if the contributor has specific overwrite preferences</li>
+                <li>Displays detailed contributor information including:
+                    <ul>
+                        <li>Languages they work with</li>
+                        <li>Special notes for each language</li>
+                        <li>Direct links to their Musixmatch profile and Slack</li>
+                    </ul>
+                </li>
+                <li>Requires explicit confirmation before proceeding with overwrites</li>
+            </ul>
         </section>
       
         <section class="section">
@@ -723,7 +738,6 @@
                     <tr>
                         <th>Icon</th>
                         <th>Role</th>
-                        <th>Description</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -749,12 +763,19 @@
                 <li><strong>Theme Toggle</strong> (🌗): Top right corner, switch between dark/light mode</li>
                 <li><strong>Close Viewer</strong> (✖): Click the X icon at the top right</li>
                 <li><strong>Scroll Arrows</strong> (⬆⬇): Use if scroll bar fails (known bug)</li>
+                <li><strong>Debug Mode</strong>: Right-click the contributor button to toggle debug mode for troubleshooting</li>
             </ul>
         </section>
 
         <section class="section">
             <h2>Warnings & Errors</h2>
             <p>The viewer only works on valid studio pages. If the script detects an unsupported page, an error will appear.</p>
+            <p>When attempting to save changes:</p>
+            <ul>
+                <li>If a contributor has "Ask" permission, you'll see a yellow warning popup</li>
+                <li>If a contributor has "No" permission, you'll see a red warning popup</li>
+                <li>Each popup includes detailed contributor information and requires explicit confirmation</li>
+            </ul>
         </section>
 
         <section class="section">
@@ -764,31 +785,44 @@
                     <tr>
                         <th>Icon</th>
                         <th>Permission</th>
+                        <th>Description</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>🔓</td>
                         <td>Allows overwrites</td>
-                        <td>Contributor allows their work to be overwritten</td>
+                        <td>Contributor allows their work to be overwritten without confirmation</td>
                     </tr>
                     <tr>
                         <td>🙋‍🔒</td>
                         <td>Ask before overwriting</td>
-                        <td>Contact contributor before making changes</td>
+                        <td>Shows a yellow warning popup requiring confirmation before changes</td>
                     </tr>
                     <tr>
                         <td>🔒</td>
                         <td>Does not allow overwrites</td>
-                        <td>Contributor's work should not be overwritten</td>
+                        <td>Shows a red warning popup requiring explicit confirmation</td>
                     </tr>
                     <tr>
                         <td>🛠️</td>
                         <td>Staff discretion</td>
-                        <td>Use your judgement for overwrites</td>
+                        <td>Use your judgement for overwrites, no confirmation required</td>
                     </tr>
                 </tbody>
             </table>
+        </section>
+
+        <section class="section">
+            <h2>Contributor Information Display</h2>
+            <p>The overwrite confirmation popup shows detailed contributor information:</p>
+            <ul>
+                <li><strong>Languages</strong>: All languages the contributor works with</li>
+                <li><strong>Notes</strong>: Special instructions or preferences for each language</li>
+                <li><strong>Links</strong>: Quick access to contributor's Musixmatch profile and Slack</li>
+                <li><strong>Permission Status</strong>: Clear visual indication of overwrite permission</li>
+            </ul>
+            <p>The information is automatically loaded when you open a track and is kept up to date as you navigate between tracks.</p>
         </section>
     </div>
 
