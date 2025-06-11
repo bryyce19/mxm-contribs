@@ -4,6 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Musixmatch Contributor Viewer – Beta</title>
+  
+  <!-- Open Graph meta tags -->
+  <meta property="og:title" content="Musixmatch Contributor Viewer - Beta">
+  <meta property="og:description" content="Try the beta version of the Musixmatch Contributor Viewer with experimental features.">
+  <meta property="og:image" content="https://i.ibb.co/qMXNXW4n/image.png">
+  <meta property="og:url" content="https://bryyce19.github.io/mxm-contribs/beta">
+  <meta property="og:type" content="website">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Musixmatch Contributor Viewer - Beta">
+  <meta name="twitter:description" content="Try the beta version with experimental features.">
+  <meta name="twitter:image" content="https://i.ibb.co/qMXNXW4n/image.png">
+  
   <link rel="icon" type="image/x-icon" href="https://em-content.zobj.net/source/apple/419/busts-in-silhouette_1f465.png">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
@@ -14,25 +27,90 @@
       padding: 40px;
     }
 
-    .banner {
-      background-color: #ffeeab;
-      padding: 10px;
-      margin-bottom: 20px;
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 0;
+      width: 100%;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .header img {
+      max-height: 60px;
+      max-width: 200px;
+      width: auto;
+      height: auto;
+    }
+
+    .header-links {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .header-link {
+      font-size: 20px;
+      color: #333;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       border-radius: 8px;
     }
 
-    .beta-warning {
-      color: red;
-      margin: 20px 0;
+    .header-link:hover {
+      color: #FF5228;
+      background: rgba(255, 82, 40, 0.1);
     }
 
-    img {
-      max-width: 300px;
-      margin-bottom: 40px;
+    .banner {
+      background-color: #fff3cd;
+      color: #856404;
+      padding: 20px;
+      margin: 40px auto 30px;
+      max-width: 600px;
+      border-radius: 8px;
+      border: 1px solid #ffeeba;
+      font-weight: 500;
+      text-align: left;
+      line-height: 1.5;
+    }
+
+    .banner i {
+      margin-right: 8px;
+    }
+
+    .banner strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.1em;
+    }
+
+    .banner ul {
+      margin: 10px 0 0 0;
+      padding-left: 20px;
+    }
+
+    .banner li {
+      margin-bottom: 5px;
+    }
+
+    .banner li:last-child {
+      margin-bottom: 0;
     }
 
     h1 {
       color: #333;
+      margin-bottom: 20px;
     }
 
     p {
@@ -73,23 +151,97 @@
       color: #FF5228;
     }
 
-/*Modal*/
-    #modalOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.7); display: none; align-items: center; justify-content: center; z-index: 10000; animation: fadeIn 0.3s ease-in-out; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    #modalContent { background: white; border-radius: 14px; max-width: 480px; width: 90%; padding: 30px; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.4); position: relative; animation: slideUp 0.3s ease-in-out; }
-    @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    #modalContent h2 { margin-top: 0; color: #FF5228; }
-    #modalContent p { margin-bottom: 1em; color: #444; font-size: 15px; line-height: 1.5; }
-    #modalContent a { color: #FF5228; text-decoration: none; }
-    #modalContent a:visited { color: #FF5228; }
-    #modalClose { position: absolute; top: 12px; right: 15px; font-size: 22px; color: #999; cursor: pointer; }
-    #modalClose:hover { color: #555; }
+    #modalOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      animation: fadeIn 0.3s ease-in-out;
+    }
 
-    .alert, .success { padding: 12px; border-radius: 8px; margin-bottom: 1em; font-weight: 500; }
-    .alert { background-color: #ffe5e0; border-left: 6px solid #FF5228; color: #d52a00; }
-    .alert a { color: #FF5228; text-decoration: underline; }
-    .success { background-color: #e9f8ee; border-left: 6px solid #28a745; color: #2b7b47; }
-    .success i { margin-right: 6px; }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    #modalContent {
+      background: white;
+      border-radius: 14px;
+      max-width: 480px;
+      width: 90%;
+      padding: 30px;
+      text-align: left;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      position: relative;
+      animation: slideUp 0.3s ease-in-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    #modalContent h2 {
+      margin-top: 0;
+      color: #FF5228;
+    }
+
+    #modalContent p {
+      margin-bottom: 1em;
+      color: #444;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    #modalContent a {
+      color: #FF5228;
+      text-decoration: none;
+    }
+
+    #modalClose {
+      position: absolute;
+      top: 12px;
+      right: 15px;
+      font-size: 22px;
+      color: #999;
+      cursor: pointer;
+    }
+
+    #modalClose:hover {
+      color: #555;
+    }
+
+    .alert, .success {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 1em;
+      font-weight: 500;
+    }
+
+    .alert {
+      background-color: #ffe5e0;
+      border-left: 6px solid #FF5228;
+      color: #d52a00;
+    }
+
+    .alert a {
+      color: #FF5228;
+    }
+
+    .success {
+      background-color: #e9f8ee;
+      border-left: 6px solid #28a745;
+      color: #2b7b47;
+    }
+
+    .success i {
+      margin-right: 6px;
+    }
 
     #continueBtn {
       background-color: #FF5228;
@@ -145,6 +297,28 @@
     #completed i {
       margin-right: 6px;
     }
+
+    /* Mobile Styles */
+    @media screen and (max-width: 480px) {
+      .header {
+        margin-bottom: 20px;
+      }
+
+      .header img {
+        max-height: 40px;
+        max-width: 150px;
+      }
+
+      .header-links {
+        gap: 8px;
+      }
+
+      .header-link {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+      }
+    }
   </style>
 
   <script>
@@ -153,18 +327,30 @@
 
 </head>
 <body>
-
-  <div class="banner">⚠️ <strong>Beta Version</strong> — Features may change, and bugs might exist.</div>
-
-  <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Musixmatch-logo-panoramic-Brand.png" alt="Musixmatch Logo"/>
+  <div class="header">
+    <a href="index.html"><img src="https://images.seeklogo.com/logo-png/52/2/musixmatch-logo-png_seeklogo-523539.png" alt="Musixmatch Logo"></a>
+    <div class="header-links">
+      <a href="https://github.com/bryyce19/mxm-contribs" target="_blank" title="GitHub" class="header-link"><i class="fab fa-github"></i></a>
+      <a href="https://lyricscurators.slack.com/team/U07AV1BPT5J" target="_blank" title="Slack" class="header-link"><i class="fab fa-slack"></i></a>
+    </div>
+  </div>
 
   <h1>Install the Musixmatch Contributor Viewer (Beta)</h1>
-  <p class="beta-warning">This is a beta version. Use at your own discretion</p>
-
+  
   <a class="button" id="installBtn" href="#">Install Beta Script</a>
 
+  <div class="banner">
+    <i class="fas fa-flask"></i> <strong>Beta Version Warning</strong>
+    This is an experimental version of the Contributor Viewer with the following considerations:
+    <ul>
+      <li>Features may be unstable or change without notice</li>
+      <li>Bugs may exist and should be reported immediately</li>
+      <li>Use at your own risk</li>
+    </ul>
+  </div>
+
   <div class="note">
-    <p>This script is not endorsed by or affilated with Musixmatch in any way.</p>
+    <p>This script is not endorsed by or affiliated with Musixmatch in any way.</p>
   </div>
 
   <div id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc">
@@ -259,9 +445,9 @@
                     "aC1jb250cmlidXRvci12aWV3ZXItYmV0" +
                     "YS51c2VyLmpz";
         const decodedLink = atob(encodedLink);
-       window.open(decodedLink, "_blank");
-    }, 100);
-  });
+        window.open(decodedLink, "_blank");
+      }, 100);
+    });
   </script>
 
 </body>
