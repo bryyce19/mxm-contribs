@@ -509,6 +509,131 @@
         display: block;
       }
     }
+
+    /* Add these styles before the existing styles */
+    .version-popup {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: white;
+      color: #333;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      z-index: 10001;
+      max-width: 320px;
+      width: calc(100% - 40px);
+      transform: translateX(400px);
+      transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      animation: slideIn 0.5s forwards;
+      border: 1px solid #eee;
+    }
+
+    @keyframes slideIn {
+      to {
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes rocketShake {
+      0% { transform: rotate(-5deg); }
+      25% { transform: rotate(5deg); }
+      50% { transform: rotate(-5deg); }
+      75% { transform: rotate(5deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    @keyframes rocketFloat {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+      100% { transform: translateY(0); }
+    }
+
+    .version-popup.show {
+      transform: translateX(0);
+    }
+
+    .version-popup h3 {
+      margin: 0 0 10px 0;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #FF5228;
+    }
+
+    .version-popup h3 i {
+      animation: rocketShake 2s ease-in-out infinite, rocketFloat 3s ease-in-out infinite;
+      display: inline-block;
+    }
+
+    .version-popup p {
+      margin: 0 0 15px 0;
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .version-popup .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: #999;
+      font-size: 20px;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s, color 0.2s;
+      padding: 5px;
+      line-height: 1;
+    }
+
+    .version-popup .close-btn:hover {
+      opacity: 1;
+      color: #FF5228;
+    }
+
+    .version-popup .changelog-btn {
+      display: inline-block;
+      background: #FF5228;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .version-popup .changelog-btn:hover {
+      transform: translateY(-2px);
+      background: #f86f4e;
+    }
+
+    @media screen and (max-width: 480px) {
+      .version-popup {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        width: auto;
+        max-width: none;
+      }
+
+      .version-popup h3 {
+        font-size: 18px;
+      }
+
+      .version-popup p {
+        font-size: 13px;
+      }
+
+      .version-popup .changelog-btn {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+      }
+    }
   </style>
 </head>
   
@@ -613,6 +738,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
 
+  <div class="version-popup" id="versionPopup">
+    <button class="close-btn" id="closeVersionPopup">&times;</button>
+    <h3><i class="fas fa-rocket"></i> Version 5 Coming Soon!</h3>
+    <p>Get ready for our biggest release yet! Packed with exciting new features and improvements.</p>
+    <a href="https://bryyce19.github.io/mxm-contribs/changelog" class="changelog-btn">View Changelog</a>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script>
     const installBtn = document.getElementById('installBtn');
@@ -621,6 +753,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const continueBtn = document.getElementById('continueBtn');
     const completed = document.getElementById('completed');
     const tmStatus = document.getElementById('tmStatus');
+    const versionPopup = document.getElementById('versionPopup');
+    const closeVersionPopup = document.getElementById('closeVersionPopup');
 
     installBtn.addEventListener('click', (event) => {
       event.preventDefault();
@@ -712,6 +846,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     tiltCard.addEventListener('mouseleave', () => {
       tiltInner.style.transform = 'rotateX(0deg) rotateY(0deg)';
+    });
+
+    // Show popup after a short delay
+    setTimeout(() => {
+      versionPopup.classList.add('show');
+    }, 1000);
+
+    // Close popup when clicking the close button
+    closeVersionPopup.addEventListener('click', () => {
+      versionPopup.style.transform = 'translateX(400px)';
+      setTimeout(() => {
+        versionPopup.style.display = 'none';
+      }, 500);
     });
   </script>
 
