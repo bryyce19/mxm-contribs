@@ -380,35 +380,6 @@
       <i class="fas fa-clock"></i> In Progress
     </h2>
 
-     <div class="bug-block">
-      <div class="bug-header">
-        <div class="bug-title">
-          <i class="fas fa-exclamation-circle"></i>
-          NEEDS MERGING: Overwrite popup doesn't support languages outside of English
-        </div>
-        <span class="bug-status status-in-progress">In Progress</span>
-      </div>
-      <div class="bug-content">
-        <div class="bug-description">
-          When the studio is in any language other than English, the popup warning users if they are about to overwrite someone doesn't appear at all.
-        </div>
-        <div class="bug-meta">
-          <div class="bug-meta-item">
-            <i class="fas fa-calendar"></i>
-            Reported: June 10, 2025
-          </div>
-          <div class="bug-meta-item">
-            <i class="fas fa-clock"></i>
-            Status: Fix found (Will be included in next ver.)
-          </div>
-          <div class="bug-meta-item">
-            <i class="fas fa-tag"></i>
-            Version: 4.0.0-dev betas
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="bug-block">
       <div class="bug-header">
         <div class="bug-title">
@@ -441,6 +412,69 @@
     <h2 style="text-align: left; margin: 30px 0 20px; color: #d52a00; font-size: 20px;">
       <i class="fas fa-exclamation-triangle"></i> Known Issues
     </h2>
+<!--
+    SAMPLE 
+    <div class="bug-block">
+      <div class="bug-header">
+        <div class="bug-title">
+          <i class="fas fa-exclamation-circle"></i>
+          No known issues at this time
+        </div>
+        <span class="bug-status status-open">None</span>
+      </div>
+      <div class="bug-content">
+        <div class="bug-description">
+          All reported issues have been resolved. If you encounter any problems, please report them through GitHub or Slack.
+        </div>
+        <div class="bug-meta">
+          <div class="bug-meta-item">
+            <i class="fas fa-calendar"></i>
+            Last Updated: June 15, 2025
+          </div>
+        </div>
+      </div>
+    </div>
+  -->
+
+    <div class="bug-block" style="text-align: center; padding: 40px 20px;">
+      <i class="fas fa-check-circle" style="font-size: 48px; color: #2b7b47; margin-bottom: 20px;"></i>
+      <h3 style="color: #2b7b47; margin: 0 0 15px 0;">All Good!</h3>
+      <p style="color: #666; margin: 0 0 20px 0;">There are currently no known issues with the script. If you see one, report it!</p>
+      <p style="color: #888; font-size: 13px; margin: 0;">Last checked: Just now</p>
+    </div>
+
+    <h2 style="text-align: left; margin: 30px 0 20px; color: #2b7b47; font-size: 20px;">
+      <i class="fas fa-check-circle"></i> Fixed
+    </h2>
+
+    <div class="bug-block">
+      <div class="bug-header">
+        <div class="bug-title">
+          <i class="fas fa-exclamation-circle"></i>
+          Overwrite popup doesn't support languages outside of English
+        </div>
+        <span class="bug-status status-fixed">Fixed</span>
+      </div>
+      <div class="bug-content">
+        <div class="bug-description">
+          The overwrite warning popup now fully supports all languages in Musixmatch Studio. Previously, the popup would not appear when the studio was set to languages other than English.
+        </div>
+        <div class="bug-meta">
+          <div class="bug-meta-item">
+            <i class="fas fa-calendar"></i>
+            Reported: June 10, 2025
+          </div>
+          <div class="bug-meta-item">
+            <i class="fas fa-check-circle"></i>
+            Fixed: June 15, 2025
+          </div>
+          <div class="bug-meta-item">
+            <i class="fas fa-tag"></i>
+            Version: 5.0.0
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="bug-block">
       <div class="bug-header">
@@ -448,11 +482,11 @@
           <i class="fas fa-exclamation-circle"></i>
           Contributor data not loading on very large tracks
         </div>
-        <span class="bug-status status-open">Known</span>
+        <span class="bug-status status-fixed">Fixed</span>
       </div>
       <div class="bug-content">
         <div class="bug-description">
-          For tracks with a very large number of contributors (50+), the contributor data may fail to load completely. This is a limitation of the current data fetching implementation. A solution is planned for a future update.
+          Implemented lazy loading for contributor data, resolving issues with tracks containing 50+ contributors. The data now loads progressively, ensuring all contributor information is displayed correctly regardless of the number of contributors.
         </div>
         <div class="bug-meta">
           <div class="bug-meta-item">
@@ -460,12 +494,12 @@
             Reported: June 2, 2025
           </div>
           <div class="bug-meta-item">
-            <i class="fas fa-clock"></i>
-            Status: Planned (Low Priority)
+            <i class="fas fa-check-circle"></i>
+            Fixed: June 15, 2025
           </div>
           <div class="bug-meta-item">
             <i class="fas fa-tag"></i>
-            Version: 4.0.0
+            Version: 5.0.0
           </div>
         </div>
       </div>
@@ -477,11 +511,11 @@
           <i class="fas fa-exclamation-circle"></i>
           Theme toggle not persisting between sessions
         </div>
-        <span class="bug-status status-open">Known</span>
+        <span class="bug-status status-fixed">Fixed</span>
       </div>
       <div class="bug-content">
         <div class="bug-description">
-          The dark/light theme preference is not saved between browser sessions. Users need to manually switch the theme each time they use the script. This is intentional, but a future update may be put in place to save your preference.
+          Added local storage support for theme preferences. Your dark/light theme choice is now saved and automatically applied when you return to the studio.
         </div>
         <div class="bug-meta">
           <div class="bug-meta-item">
@@ -489,20 +523,16 @@
             Reported: N/A
           </div>
           <div class="bug-meta-item">
-            <i class="fas fa-clock"></i>
-            Status: Planned (Low Priority)
+            <i class="fas fa-check-circle"></i>
+            Fixed: June 15, 2025
           </div>
           <div class="bug-meta-item">
             <i class="fas fa-tag"></i>
-            Version: 1.0.0-4.0.0
+            Version: 5.0.0
           </div>
         </div>
       </div>
     </div>
-
-    <h2 style="text-align: left; margin: 30px 0 20px; color: #2b7b47; font-size: 20px;">
-      <i class="fas fa-check-circle"></i> Fixed
-    </h2>
 
     <div class="bug-block">
       <div class="bug-header">
@@ -569,7 +599,7 @@
   </a>
 
   <div class="note" style="margin-top: 40px; font-size: 12px; color: #666;">
-    <p>This script is not endorsed by or affiliated with Musixmatch in any way.</p>
+    <p>This script is not endorsed by or affiliated with Musixmatch</p>
   </div>
 
   <script>
