@@ -619,25 +619,36 @@
 
     @media screen and (max-width: 480px) {
       .version-popup {
-        top: 10px;
-        right: 10px;
-        left: 10px;
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
         width: auto;
         max-width: none;
+        padding: 15px;
+        transform: translateY(100%);
+        animation: slideUp 0.5s forwards;
       }
 
       .version-popup h3 {
-        font-size: 18px;
+        font-size: 16px;
+        margin-bottom: 8px;
       }
 
       .version-popup p {
         font-size: 13px;
+        margin-bottom: 12px;
       }
 
       .version-popup .changelog-btn {
-        width: 100%;
-        text-align: center;
-        box-sizing: border-box;
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+
+      @keyframes slideUp {
+        to {
+          transform: translateY(0);
+        }
       }
     }
   </style>
