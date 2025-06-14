@@ -163,6 +163,10 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       border: 1px solid #eee;
       transition: transform 0.2s ease;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      word-break: break-word;
+      hyphens: auto;
     }
 
     .section-block:hover {
@@ -193,11 +197,17 @@
     .section-content {
       color: #444;
       line-height: 1.6;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      word-break: break-word;
     }
 
     .section-content ul, .section-content ol {
       margin: 0;
       padding-left: 20px;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      word-break: break-word;
     }
 
     .section-content li {
@@ -205,6 +215,9 @@
       display: flex;
       align-items: flex-start;
       gap: 8px;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      word-break: break-word;
     }
 
     .section-content li i {
@@ -218,6 +231,7 @@
       border-collapse: separate;
       border-spacing: 0;
       margin: 15px 0;
+      table-layout: fixed;
     }
 
     .permission-table th,
@@ -225,6 +239,9 @@
       padding: 12px;
       text-align: left;
       border-bottom: 1px solid #eee;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      word-break: break-word;
     }
 
     .permission-table th {
@@ -295,6 +312,7 @@
 
       .section-block {
         padding: 20px;
+        margin: 0 10px 20px;
       }
 
       .section-title {
@@ -349,6 +367,21 @@
       .menu-backdrop.active {
         display: block;
       }
+
+      .section-content {
+        font-size: 14px;
+      }
+
+      .permission-table th,
+      .permission-table td {
+        padding: 8px;
+        font-size: 13px;
+      }
+
+      .permission-table th:first-child,
+      .permission-table td:first-child {
+        width: 40px;
+      }
     }
   </style>
 </head>
@@ -365,18 +398,18 @@
   
 <body>
   <div class="header">
-     <a href="index.html"><img src="https://i.ibb.co/zTSzTgFf/IMG-2954-2.png" alt="Musixmatch Contributor Viewer Logo"></a>
+     <a href="index.html"><img src="./img/finallogo.png" alt="Musixmatch Contributor Viewer Logo"></a>
     <div class="header-links">
       <a href="https://github.com/bryyce19/mxm-contribs" target="_blank" title="GitHub" class="header-link"><i class="fab fa-github"></i></a>
       <a href="https://lyricscurators.slack.com/team/U07AV1BPT5J" target="_blank" title="Slack" class="header-link"><i class="fab fa-slack"></i></a>
       <div class="menu-container">
         <a class="header-link menu-trigger" href="#" id="menuTrigger" title="More options"><i class="fas fa-ellipsis-v"></i></a>
         <div class="menu-popup" id="menuPopup">
-          <a href="https://bryyce19.github.io/mxm-contribs/changelog" class="menu-item">
+          <a href="./changelog" class="menu-item">
             <i class="fas fa-history"></i> Changelog
           </a>
           <div class="menu-divider"></div>
-          <a href="https://bryyce19.github.io/mxm-contribs/bugs" class="menu-item">
+          <a href="./bugs" class="menu-item">
             <i class="fas fa-bug"></i> Known Bugs
           </a>
         </div>
@@ -468,15 +501,15 @@
           </thead>
           <tbody>
             <tr>
-              <td><img src="https://github.com/bryyce19/mxm-contribs/blob/main/spec1.png?raw=true" alt="Specialist" style="width: 20px; height: 20px;"></td>
+              <td><img src="https://github.com/bryyce19/mxm-contribs/blob/main/img/spec1.png?raw=true" alt="Specialist" style="width: 20px; height: 20px;"></td>
               <td>Specialist</td>
             </tr>
             <tr>
-              <td><img src="https://github.com/bryyce19/mxm-contribs/blob/main/curator1.png?raw=true" alt="Curator" style="width: 20px; height: 20px;"></td>
+              <td><img src="https://github.com/bryyce19/mxm-contribs/blob/main/img/curator1.png?raw=true" alt="Curator" style="width: 20px; height: 20px;"></td>
               <td>Curator</td>
             </tr>
             <tr>
-              <td><img src="https://github.com/bryyce19/mxm-contribs/blob/main/grad1.png?raw=true" alt="Graduate/Rookie" style="width: 20px; height: 20px;"></td>
+              <td><img src="https://github.com/bryyce19/mxm-contribs/blob/main/img/grad1.png?raw=true" alt="Graduate/Rookie" style="width: 20px; height: 20px;"></td>
               <td>Graduate/Rookie</td>
             </tr>
           </tbody>

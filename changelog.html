@@ -225,7 +225,11 @@
     }
 
     .removal {
-      color: #6c757d;
+      color: #dc3545;
+    }
+
+    .removal i {
+      color: #dc3545;
     }
 
     .back-button {
@@ -340,19 +344,27 @@
   
 <body>
   <div class="header">
-    <a href="index.html"><img src="https://i.ibb.co/zTSzTgFf/IMG-2954-2.png" alt="Musixmatch Contributor viewer Logo"></a>
+    <a href="index.html"><img src="./img/finallogo.png" alt="Musixmatch Contributor Viewer Logo"></a>
     <div class="header-links">
       <a href="https://github.com/bryyce19/mxm-contribs" target="_blank" title="GitHub" class="header-link"><i class="fab fa-github"></i></a>
       <a href="https://lyricscurators.slack.com/team/U07AV1BPT5J" target="_blank" title="Slack" class="header-link"><i class="fab fa-slack"></i></a>
       <div class="menu-container">
         <a class="header-link menu-trigger" href="#" id="menuTrigger" title="More options"><i class="fas fa-ellipsis-v"></i></a>
         <div class="menu-popup" id="menuPopup">
-          <a href="https://bryyce19.github.io/mxm-contribs/bugs" class="menu-item">
+          <a href="./bugs" class="menu-item">
             <i class="fas fa-bug"></i> Known Bugs
           </a>
           <div class="menu-divider"></div>
-          <a href="https://bryyce19.github.io/mxm-contribs/guide" class="menu-item">
+          <a href="./guide" class="menu-item">
             <i class="fas fa-book"></i> Documentation
+          </a>
+          <div class="menu-divider"></div>
+          <a href="https://forms.gle/QQGULBDcCeSv9yuG6" target="_blank" class="menu-item">
+            <i class="fas fa-lightbulb"></i> Request Feature
+          </a>
+          <div class="menu-divider"></div>
+          <a href="https://forms.gle/Ce4NLUxQb9oXs1RL7" target="_blank" class="menu-item">
+            <i class="fas fa-key"></i> Change Permission
           </a>
         </div>
       </div>
@@ -363,21 +375,30 @@
 
   <h1>Version History</h1>
   <div class="changelog-container">
-    <!-- <div class="version-block">
+    <div class="version-block">
       <div class="version-header">
         <span class="version-number">Version 5.0.0</span>
-        <span class="version-date">June 11, 2025</span>
+        <span class="version-date">June 13, 2025</span>
       </div>
       <div class="version-content">
         <ul>
-          <li class="feature"><i class="fas fa-plus-circle"></i> Added contributor data pre-fetching for faster loading</li>
-          <li class="feature"><i class="fas fa-plus-circle"></i> Added debug mode for troubleshooting</li>
-          <li class="improvement"><i class="fas fa-arrow-up"></i> Improved error handling and user feedback</li>
-          <li class="improvement"><i class="fas fa-arrow-up"></i> Enhanced mobile responsiveness</li>
+          <li class="feature"><i class="fas fa-plus-circle"></i> Added dark/light theme persistence</li>
+          <li class="feature"><i class="fas fa-plus-circle"></i> Added beta studio support</li>
+          <li class="feature"><i class="fas fa-plus-circle"></i> Added detailed permission warnings</li>
+          <li class="feature"><i class="fas fa-plus-circle"></i> Added recent contributor highlight</li>
+          <li class="feature"><i class="fas fa-plus-circle"></i> Added automatic contributor loading (no need to open info tab)</li>
+          <li class="feature"><i class="fas fa-plus-circle"></i> Added contributor grouping by month</li>
+          <li class="improvement"><i class="fas fa-arrow-up"></i> Redesigned error pages</li>
+          <li class="improvement"><i class="fas fa-arrow-up"></i> Enhanced contributor info display</li>
+          <li class="improvement"><i class="fas fa-arrow-up"></i> Improved loading screen</li>
+          <li class="improvement"><i class="fas fa-arrow-up"></i> Implemented data caching for faster loading</li>
+          <li class="improvement"><i class="fas fa-arrow-up"></i> Added lazy loading for better performance</li>
+          <li class="improvement"><i class="fas fa-arrow-up"></i> Complete UI redesign</li>
+          <li class="removal"><i class="fas fa-minus-circle"></i> Removed filter options</li>
           <li class="fix"><i class="fas fa-wrench"></i> Fixed various UI bugs and glitches</li>
         </ul>
       </div>
-    </div> -->
+    </div>
 
     <div class="version-block">
       <div class="version-header">

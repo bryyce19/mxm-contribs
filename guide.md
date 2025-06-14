@@ -37,9 +37,9 @@
 
 | Icon                                                                                                                               | Meaning             |
 | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
-| <img src="https://github.com/bryyce19/mxm-contribs/blob/main/spec1.png?raw=true" alt="beige badge" width="16" style="vertical-align: text-bottom;">  | **Specialist**      |
-| <img src="https://github.com/bryyce19/mxm-contribs/blob/main/curator1.png?raw=true" alt="green badge" width="16" style="vertical-align: text-bottom;">  | **Curator**         |
-| <img src="https://github.com/bryyce19/mxm-contribs/blob/main/grad1.png?raw=true" alt="yellow badge" width="16" style="vertical-align: text-bottom;"> | **Graduate/Rookie** |
+| <img src="https://github.com/bryyce19/mxm-contribs/blob/main/img/spec1.png?raw=true" alt="beige badge" width="16" style="vertical-align: text-bottom;">  | **Specialist**      |
+| <img src="https://github.com/bryyce19/mxm-contribs/blob/main/img/curator1.png?raw=true" alt="green badge" width="16" style="vertical-align: text-bottom;">  | **Curator**         |
+| <img src="https://github.com/bryyce19/mxm-contribs/blob/main/img/grad1.png?raw=true" alt="yellow badge" width="16" style="vertical-align: text-bottom;"> | **Graduate/Rookie** |
 
 ---
 
@@ -47,7 +47,7 @@
 
 * <img src="https://i.postimg.cc/P56L9Sm7/image.png" alt="moon icon" width="18" style="vertical-align: text-bottom;"> **Theme Toggle**: Click the **moon icon** at the top right to switch between **light** and **dark** mode.
 * **Close Viewer**: Click the **X icon** in the top right corner.
-* <img src="https://i.postimg.cc/kXqB50sZ/image.png" alt=" arrow" width="18" style="vertical-align: text-bottom;"> **Manual Scroll**: Use these if the scroll bar doesn’t work (a known issue on Musixmatch).
+* <img src="https://i.postimg.cc/kXqB50sZ/image.png" alt=" arrow" width="18" style="vertical-align: text-bottom;"> **Manual Scroll**: Use these if the scroll bar doesn't work (a known issue on Musixmatch).
 
 ---
 

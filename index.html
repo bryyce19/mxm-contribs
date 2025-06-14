@@ -513,8 +513,8 @@
     /* Add these styles before the existing styles */
     .version-popup {
       position: fixed;
-      top: 20px;
-      right: 20px;
+      bottom: 20px;
+      left: 20px;
       background: white;
       color: #333;
       padding: 20px;
@@ -523,10 +523,11 @@
       z-index: 10001;
       max-width: 320px;
       width: calc(100% - 40px);
-      transform: translateX(400px);
+      transform: translateX(-400px);
       transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       animation: slideIn 0.5s forwards;
       border: 1px solid #eee;
+      text-align: left;
     }
 
     @keyframes slideIn {
@@ -560,6 +561,7 @@
       align-items: center;
       gap: 8px;
       color: #FF5228;
+      text-align: left;
     }
 
     .version-popup h3 i {
@@ -572,6 +574,7 @@
       font-size: 14px;
       color: #666;
       line-height: 1.5;
+      text-align: left;
     }
 
     .version-popup .close-btn {
@@ -604,6 +607,9 @@
       font-weight: 600;
       font-size: 14px;
       transition: transform 0.2s, background 0.2s;
+      text-align: center;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .version-popup .changelog-btn:hover {
@@ -653,23 +659,31 @@
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <div class="header">
-    <img src="https://i.ibb.co/zTSzTgFf/IMG-2954-2.png" alt="Musixmatch Contributor Viewer Logo">
+    <img src="./img/finallogo.png" alt="Musixmatch Contributor Viewer Logo">
     <div class="header-links">
       <a href="https://github.com/bryyce19/mxm-contribs" target="_blank" title="GitHub" class="header-link"><i class="fab fa-github"></i></a>
       <a href="https://lyricscurators.slack.com/team/U07AV1BPT5J" target="_blank" title="Slack" class="header-link"><i class="fab fa-slack"></i></a>
       <div class="menu-container">
         <a class="header-link menu-trigger" href="#" id="menuTrigger" title="More options"><i class="fas fa-ellipsis-v"></i></a>
         <div class="menu-popup" id="menuPopup">
-          <a href="https://bryyce19.github.io/mxm-contribs/changelog" class="menu-item">
+          <a href="./changelog" class="menu-item">
             <i class="fas fa-history"></i> Changelog
           </a>
           <div class="menu-divider"></div>
-          <a href="https://bryyce19.github.io/mxm-contribs/bugs" class="menu-item">
+          <a href="./bugs" class="menu-item">
             <i class="fas fa-bug"></i> Known Bugs
           </a>
           <div class="menu-divider"></div>
-          <a href="https://bryyce19.github.io/mxm-contribs/guide" class="menu-item">
+          <a href="./guide" class="menu-item">
             <i class="fas fa-book"></i> Documentation
+          </a>
+          <div class="menu-divider"></div>
+          <a href="https://forms.gle/QQGULBDcCeSv9yuG6" target="_blank" class="menu-item">
+            <i class="fas fa-lightbulb"></i> Request Feature
+          </a>
+          <div class="menu-divider"></div>
+          <a href="https://forms.gle/Ce4NLUxQb9oXs1RL7" target="_blank" class="menu-item">
+            <i class="fas fa-key"></i> Change Permission
           </a>
         </div>
       </div>
@@ -680,7 +694,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <h1>Install the Musixmatch Contributor Viewer</h1>
   <p>A script to streamline productivity in Musixmatch Studio with contributor tools, filters, overwrite warnings, and more.</p>
-  <a class="button" id="installBtn" href="#">Install Script</a>
+  <a class="button" id="installBtn" href="#"><i class="fas fa-download"></i> Install Script</a>
 
   <div style="margin: 50px auto 30px; max-width: 600px;">
     <div class="tilt-card">
@@ -740,8 +754,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <div class="version-popup" id="versionPopup">
     <button class="close-btn" id="closeVersionPopup">&times;</button>
-    <h3><i class="fas fa-rocket"></i> Version 5 Coming Soon!</h3>
-    <p>Get ready for our biggest release yet! Packed with exciting new features and improvements.</p>
+    <h3><i class="fas fa-rocket"></i> Version 5.0.0 Released!</h3>
+    <p>Check out the biggest release yet! Features include: dark/light theme persistence, beta studio support, redesigned error pages, and more.</p>
     <a href="https://bryyce19.github.io/mxm-contribs/changelog" class="changelog-btn">View Changelog</a>
   </div>
 
@@ -855,7 +869,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     // Close popup when clicking the close button
     closeVersionPopup.addEventListener('click', () => {
-      versionPopup.style.transform = 'translateX(400px)';
+      versionPopup.style.transform = 'translateX(-400px)';
       setTimeout(() => {
         versionPopup.style.display = 'none';
       }, 500);
