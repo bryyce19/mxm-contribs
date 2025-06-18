@@ -418,7 +418,7 @@
   
     const renderContributors = (filtered) => {
         if (!filtered || filtered.length === 0) {
-            showMessage(`⚠️ No contributor data found for this track. This song may not have any contributors. Reach out to Bryce on Slack if you think this is an error.`);
+            showMessage(`⚠️ No contributor data found for this track. If this is a song with no previous contributions, you can safely ignore this warning. Contact Bryce M. on Slack if you think this is a mistake!`);
             return;
         }
 
