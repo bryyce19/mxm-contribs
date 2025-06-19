@@ -667,7 +667,7 @@
     } else if (msg.includes('track info tab')) {
       subtitle = 'The track info tab must be opened first to load contributor data.';
     } else if (msg.includes('Failed to load')) {
-      subtitle = 'Opps! Something went wrong... Try refreshing the page or contaxcting Bryce M. on Slack if the issue persists!';
+      subtitle = 'Please try refreshing the page or contact Bryce on Slack if the issue persists.';
     }
 
     panel.innerHTML = `
