@@ -418,7 +418,7 @@
   
     const renderContributors = (filtered) => {
         if (!filtered || filtered.length === 0) {
-            showMessage(`⚠️ No contributor data found for this track. This song may not have any contributors. Reach out to Bryce on Slack if you think this is an error.`);
+            showMessage(`⚠️ No contributor data found for this track. If this is a song with no previous contributions, you can safely ignore this warning. Contact Bryce M. on Slack if you think this is a mistake!`);
             return;
         }
 
@@ -974,7 +974,7 @@
         songInfo,
         fetchDuration: Date.now() - startTime
       });
-      showMessage('⚠️ Failed to load contributor data. There may be none.', 'orange');
+      showMessage('⚠️ Failed to load contributor data. If this is a new track, you can safely ignore this warning.', 'orange');
       return null;
     });
   };
@@ -1253,7 +1253,7 @@
                 color: ${isDark ? '#666' : '#999'};
               ">
                 <i class="fas fa-info-circle" style="color: #FC542E; font-size: 16px; margin-top: 2px;"></i>
-                user has no notes
+                User has not added any notes.
               </div>
             `}
           </div>
@@ -1380,7 +1380,7 @@
           text-align: center;
         ">
           <i class="fas fa-exclamation-triangle" style="margin-right: 4px;"></i>
-          Overwriting lyrics without permission is against Musixmatch guidelines and may result in demotion from specialist status.
+          Overwriting lyrics without permission is against Musixmatch guidelines and may result in demotion from your current rank.
         </div>
       </div>
     `;
@@ -1451,7 +1451,7 @@
             'Отправить',  // Russian
             'प्रेषय',     // Sanskrit
             'Tumira',     // Shona
-            'Odoslať',    // Slovak
+            'Odoslať',    // Slovak <3
             'Enviar',     // Spanish
             'Kirim',      // Sundanese
             'Skicka',     // Swedish
