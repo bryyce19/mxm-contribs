@@ -392,33 +392,11 @@
       <i class="fas fa-clock"></i> In Progress
     </h2>
 
-    <div class="bug-block">
-      <div class="bug-header">
-        <div class="bug-title">
-          <i class="fas fa-exclamation-circle"></i>
-          Unable to scroll when dialogs are open
-        </div>
-        <span class="bug-status status-in-progress">In Progress</span>
-      </div>
-      <div class="bug-content">
-        <div class="bug-description">
-          When certain dialogs (like the track info dialog) are open, the page becomes unscrollable. This affects the ability to view all content when dialogs are present. A fix is in development; however, this can be avoided by using the arrow buttons or closing the dialog.
-        </div>
-        <div class="bug-meta">
-          <div class="bug-meta-item">
-            <i class="fas fa-calendar"></i>
-            Reported: May 30, 2025
-          </div>
-          <div class="bug-meta-item">
-            <i class="fas fa-clock"></i>
-            Status: Investigating (Mid Priority)
-          </div>
-          <div class="bug-meta-item">
-            <i class="fas fa-tag"></i>
-            Version: 2.0.0-4.0.0
-          </div>
-        </div>
-      </div>
+    <div class="bug-block" style="text-align: center; padding: 40px 20px;">
+      <i class="fas fa-check-circle" style="font-size: 48px; color: #2b7b47; margin-bottom: 20px;"></i>
+      <h3 style="color: #2b7b47; margin: 0 0 15px 0;">All Good!</h3>
+      <p style="color: #666; margin: 0 0 20px 0;">There are currently no in-progress issues with the script. If you see one, report it!</p>
+      <p style="color: #888; font-size: 13px; margin: 0;">Last checked: Just now</p>
     </div>
 
     <h2 style="text-align: left; margin: 30px 0 20px; color: #d52a00; font-size: 20px;">
@@ -447,7 +425,7 @@
       </div>
     </div>
   -->
-
+    
     <div class="bug-block" style="text-align: center; padding: 40px 20px;">
       <i class="fas fa-check-circle" style="font-size: 48px; color: #2b7b47; margin-bottom: 20px;"></i>
       <h3 style="color: #2b7b47; margin: 0 0 15px 0;">All Good!</h3>
@@ -599,6 +577,35 @@
           <div class="bug-meta-item">
             <i class="fas fa-tag"></i>
             Version: 4.0.0
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bug-block">
+      <div class="bug-header">
+        <div class="bug-title">
+          <i class="fas fa-exclamation-circle"></i>
+          Unable to scroll when dialogs are open
+        </div>
+        <span class="bug-status status-fixed">Fixed</span>
+      </div>
+      <div class="bug-content">
+        <div class="bug-description">
+          When certain dialogs (like the track info dialog) were open, the page became unscrollable and you could not scroll the contributors list. This has been fixed: the contributors panel is now always scrollable, even when a native popup is open.
+        </div>
+        <div class="bug-meta">
+          <div class="bug-meta-item">
+            <i class="fas fa-calendar"></i>
+            Reported: May 30, 2025
+          </div>
+          <div class="bug-meta-item">
+            <i class="fas fa-check-circle"></i>
+            Fixed: June 19, 2025
+          </div>
+          <div class="bug-meta-item">
+            <i class="fas fa-tag"></i>
+            Version: 5.0.1
           </div>
         </div>
       </div>

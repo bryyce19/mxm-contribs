@@ -2,8 +2,8 @@
 // @name         Musixmatch-Contributor-Viewer
 // @author       Bryce
 // @namespace    http://tampermonkey.net/
-// @version      5.0.0
-// @description  Version 5.0.0 is here! New features include: Dark/Light persistence, beta studio support, redesigned error pages, improved contributor info display, enhanced overwrite protection with detailed permission warnings and detailed debugging.
+// @version      5.1.0
+// @description  Version 5.1.0 adds the ability to set your name (so you won't get overwrite warnings on your own contributions), makes the contributors panel always scrollable (even when Musixmatch popups are open), and fixes several bugs for a smoother experience.
 // @match        https://curators.musixmatch.com/*
 // @match        https://curators-beta.musixmatch.com/*
 // @grant        GM_xmlhttpRequest
@@ -1030,6 +1030,29 @@
     renderContributors(currentPageContributors);
   };
 
+  // Move menuItems definition to top-level scope so it's accessible in the event handler
+  const menuItems = (menu, event, button) => [
+    { text: '🌐 Visit Website', url: 'https://bryyce19.github.io/mxm-contribs/' },
+    { text: '📚 Documentation', url: 'https://bryyce19.github.io/mxm-contribs/guide' },
+    { text: debugMode ? '🔴 Disable Debug Mode' : '🟢 Enable Debug Mode', action: () => {
+      debugMode = !debugMode;
+      debugLog('Debug mode', debugMode ? 'enabled' : 'disabled');
+      // Just close the menu; label will update next time menu is opened
+    }},
+    { text: '🙋‍♂️ Set My Name', action: () => {
+      const currentName = localStorage.getItem('mxmMyName') || '';
+      const name = prompt('Enter your Musixmatch name as it appears on the permission to overwrite spreadsheet:\n(Type REMOVE to clear your name)', currentName);
+      if (name === null) return; // Cancelled
+      if (!name.trim() || name.trim().toLowerCase() === 'remove') {
+        localStorage.removeItem('mxmMyName');
+        alert('Your name has been removed.');
+      } else {
+        localStorage.setItem('mxmMyName', name.trim());
+        alert('Your name has been saved!');
+      }
+    }}
+  ];
+
   // add context menu to button
   button.addEventListener('contextmenu', (e) => {
     e.preventDefault();
@@ -1039,9 +1062,17 @@
     const menuWidth = 200; // approximate width of menu
     const shouldShowLeft = e.clientX + menuWidth > window.innerWidth;
 
+    // Calculate vertical position to prevent cutoff at bottom
+    const menuHeight = 44 * menuItems(menu, e, button).length; // estimate 44px per item
+    let top = e.clientY;
+    if (top + menuHeight > window.innerHeight) {
+      top = window.innerHeight - menuHeight - 10; // 10px margin from bottom
+      if (top < 0) top = 10; // 10px margin from top if too high
+    }
+
     menu.style = `
       position: fixed;
-      top: ${e.clientY}px;
+      top: ${top}px;
       left: ${shouldShowLeft ? (e.clientX - menuWidth) : e.clientX}px;
       background: ${isDark ? '#2a2a2a' : '#ffffff'};
       border: 1px solid ${isDark ? '#444' : '#ddd'};
@@ -1052,17 +1083,7 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
       min-width: 180px;
     `;
-
-    const menuItems = [
-      { text: '🌐 Visit Website', url: 'https://bryyce19.github.io/mxm-contribs/' },
-      { text: '📚 Documentation', url: 'https://bryyce19.github.io/mxm-contribs/guide' },
-      { text: debugMode ? '🔴 Disable Debug Mode' : '🟢 Enable Debug Mode', action: () => {
-        debugMode = !debugMode;
-        debugLog('Debug mode', debugMode ? 'enabled' : 'disabled');
-      }}
-    ];
-
-    menuItems.forEach(item => {
+    menuItems(menu, e, button).forEach(item => {
       const div = document.createElement('div');
       div.style = `
         padding: 8px 16px;
@@ -1083,11 +1104,11 @@
         div.style.background = 'transparent';
         div.style.transform = 'translateX(0)';
       };
-      div.onclick = () => {
+      div.onclick = (ev) => {
         if (item.url) {
           window.open(item.url, '_blank');
         } else if (item.action) {
-          item.action();
+          item.action(ev);
         }
         if (menu.parentNode) {
           document.body.removeChild(menu);
@@ -1451,7 +1472,7 @@
             'Отправить',  // Russian
             'प्रेषय',     // Sanskrit
             'Tumira',     // Shona
-            'Odoslať',    // Slovak <3
+            'Odoslať',    // Slovak
             'Enviar',     // Spanish
             'Kirim',      // Sundanese
             'Skicka',     // Swedish
@@ -1518,6 +1539,14 @@
                 permission,
                 matchType: keyExact in permissionData ? 'exact' : keyInit in permissionData ? 'initials' : 'none'
               });
+
+              // skip popup if user is the contributor
+              const myName = (localStorage.getItem('mxmMyName') || '').trim().toLowerCase();
+              if (myName && currentContributor.name.trim().toLowerCase() === myName) {
+                debugLog('Skipping overwrite popup for user\'s own contribution');
+                hasAcknowledgedWarning = true;
+                return;
+              }
 
               // if permission is 'ask' or 'no' and user hasn't acknowledged warning
               if ((permission === 'ask' || permission === 'no') && !hasAcknowledgedWarning) {
@@ -1618,4 +1647,59 @@
   waitForPageReady().then(() => {
     interceptSaveButton();
   })
+
+  // Ensure the contributors panel is always scrollable, even if the main page disables scrolling
+  panel.style.overflowY = 'auto';
+  panel.style.pointerEvents = 'auto';
+  panel.style.zIndex = '9999999'; // keep above most overlays
+
+  // Add a style element to force scrollability
+  const forceScrollStyle = document.createElement('style');
+  forceScrollStyle.textContent = `
+    .mxm-panel {
+      overflow-y: auto !important;
+      pointer-events: auto !important;
+      z-index: 9999999 !important;
+      position: fixed !important;
+    }
+  `;
+  document.head.appendChild(forceScrollStyle);
+
+  // --- Force scrollability even when page is locked by a modal ---
+  // Mouse wheel support
+  panel.addEventListener('wheel', function(e) {
+    // Only scroll the panel, not the page
+    if (panel.scrollHeight > panel.clientHeight) {
+      e.stopPropagation();
+      // Allow scrolling up/down
+      const prevScroll = panel.scrollTop;
+      panel.scrollTop += e.deltaY;
+      // Prevent page scroll if panel can scroll further
+      if ((e.deltaY < 0 && prevScroll > 0) || (e.deltaY > 0 && prevScroll + panel.clientHeight < panel.scrollHeight)) {
+        e.preventDefault();
+      }
+    }
+  }, { passive: false });
+
+  // Touch support for mobile
+  let lastY = null;
+  panel.addEventListener('touchstart', function(e) {
+    if (e.touches.length === 1) {
+      lastY = e.touches[0].clientY;
+    }
+  });
+  panel.addEventListener('touchmove', function(e) {
+    if (e.touches.length === 1 && lastY !== null) {
+      const newY = e.touches[0].clientY;
+      const deltaY = lastY - newY;
+      const prevScroll = panel.scrollTop;
+      panel.scrollTop += deltaY;
+      lastY = newY;
+      // Prevent page scroll if panel can scroll further
+      if ((deltaY < 0 && prevScroll > 0) || (deltaY > 0 && prevScroll + panel.clientHeight < panel.scrollHeight)) {
+        e.preventDefault();
+      }
+    }
+  }, { passive: false });
+  panel.addEventListener('touchend', function() { lastY = null; });
 })();
