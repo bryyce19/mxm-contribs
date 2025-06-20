@@ -2,8 +2,8 @@
 // @name         Musixmatch-Contributor-Viewer
 // @author       Bryce
 // @namespace    http://tampermonkey.net/
-// @version      5.1.0
-// @description  Version 5.1.0 adds the ability to set your name (so you won't get overwrite warnings on your own contributions), makes the contributors panel always scrollable (even when Musixmatch popups are open), and fixes several bugs for a smoother experience.
+// @version      5.1.1
+// @description  Version 5.1.1 is an emergency patch that fixes a critical bug where contributor names containing a period (e.g., "Mangezi R.") were incorrectly displayed and formatted throughout the UI, including the contributor list and overwrite popup.
 // @match        https://curators.musixmatch.com/*
 // @match        https://curators-beta.musixmatch.com/*
 // @grant        GM_xmlhttpRequest
@@ -99,8 +99,18 @@
   
     const normalizeName = name => {
     if (!name) return '';
-      const parts = name.trim().split(' ');
-      return parts.length > 1 ? `${parts[0].toLowerCase()} ${parts[1][0].toLowerCase()}` : name.toLowerCase();
+      const parts = name.trim().split(' ').filter(part => part.length > 0);
+      if (parts.length === 0) return '';
+      if (parts.length === 1) return parts[0].toLowerCase();
+      
+      // Handle cases where second part is just a single letter (with or without period)
+      const secondPart = parts[1].replace(/\.$/, ''); // Remove trailing period
+      if (secondPart.length === 1) {
+        return `${parts[0].toLowerCase()} ${secondPart.toLowerCase()}`;
+      }
+      
+      // Original logic for longer second parts
+      return `${parts[0].toLowerCase()} ${secondPart[0].toLowerCase()}`;
     };
   
     const fetchPermissionData = () => new Promise(resolve => {
@@ -422,6 +432,13 @@
             return;
         }
 
+        // Debug log the filtered data
+        debugLog('Rendering contributors:', {
+          totalContributors: filtered.length,
+          firstContributor: filtered[0],
+          allContributors: filtered.map(c => ({ name: c.name, role: c.role, type: c.type }))
+        });
+
         panel.innerHTML = '<strong style="font-size: 1.3em; display:block; margin-bottom: 12px;">Contributors</strong>';
   
         const closeX = document.createElement('span');
@@ -433,6 +450,15 @@
 
     // add most recent section
     const mostRecent = filtered[0];
+    
+    // Debug log the most recent contributor
+    debugLog('Most recent contributor:', {
+      name: mostRecent.name,
+      role: mostRecent.role,
+      type: mostRecent.type,
+      date: mostRecent.date
+    });
+    
     const mostRecentSection = document.createElement('div');
     mostRecentSection.style = `
       background: ${isDark ? '#2a2a2a' : '#ffffff'};
@@ -501,6 +527,9 @@
   
     // Function to render a single contributor entry
     const renderContributorEntry = ({ name, role, type, date }) => {
+          // Debug log the contributor entry being rendered
+          debugLog('Rendering contributor entry:', { name, role, type, date });
+          
           const roleKey = role.toLowerCase();
           const isSpecialist = roleKey === 'specialist';
           const iconSrc = roleIcons[roleKey] || emojiFallback[roleKey] || roleIcons.fallback;
@@ -882,7 +911,7 @@
                 totalMatches: rawContributorData ? rawContributorData.length : 0
               });
 
-            const regex = /"name":"(.*?)","role":"(.*?)","contributionType":"(.*?)","date":"(.*?)"/g;
+            const regex = /"name":"([^"]+)","role":"([^"]+)","contributionType":"([^"]+)","date":"([^"]+)"/g;
               const newContributors = [];
             let match;
             while ((match = regex.exec(text)) !== null) {
@@ -949,6 +978,16 @@
           const keyExact = c.name.toLowerCase();
           const keyInit = normalizeName(c.name);
           const matchRows = permissions[keyExact] || permissions[keyInit] || [];
+          
+          // Debug log for permission matching
+          debugLog('Permission matching:', {
+            originalName: c.name,
+            keyExact,
+            keyInit,
+            matchFound: matchRows.length > 0,
+            matchType: keyExact in permissions ? 'exact' : keyInit in permissions ? 'initials' : 'none'
+          });
+          
           return {
             name: c.name,
             role: c.role,
@@ -1131,6 +1170,14 @@
 
   // add overwrite confirmation popup
   const createOverwritePopup = (contributorName, permission) => {
+    // Debug log the popup creation
+    debugLog('Creating overwrite popup:', {
+      contributorName,
+      permission,
+      keyExact: contributorName.toLowerCase(),
+      keyInit: normalizeName(contributorName)
+    });
+    
     const popup = document.createElement('div');
     popup.style = `
       position: fixed;
@@ -1522,7 +1569,12 @@
 
               // get current contributor
               const currentContributor = currentPageContributors[0];
-              debugLog('Current contributor:', currentContributor);
+              debugLog('Current contributor for save button:', {
+                name: currentContributor?.name,
+                role: currentContributor?.role,
+                type: currentContributor?.type,
+                date: currentContributor?.date
+              });
 
               if (!currentContributor) {
                 debugLog('No contributor found, proceeding with save');
@@ -1534,10 +1586,13 @@
               const keyInit = normalizeName(currentContributor.name);
               const matchRows = permissionData[keyExact] || permissionData[keyInit] || [];
               const permission = matchRows[0]?.permission;
-              debugLog('Contributor permission:', {
-                name: currentContributor.name,
+              debugLog('Contributor permission check:', {
+                originalName: currentContributor.name,
+                keyExact,
+                keyInit,
                 permission,
-                matchType: keyExact in permissionData ? 'exact' : keyInit in permissionData ? 'initials' : 'none'
+                matchType: keyExact in permissionData ? 'exact' : keyInit in permissionData ? 'initials' : 'none',
+                matchRowsFound: matchRows.length
               });
 
               // skip popup if user is the contributor
@@ -1553,6 +1608,14 @@
                 debugLog('Showing overwrite warning popup');
                 e.preventDefault();
                 e.stopPropagation();
+
+                // Debug log the popup creation call
+                debugLog('Creating popup with contributor:', {
+                  name: currentContributor.name,
+                  permission,
+                  keyExact: currentContributor.name.toLowerCase(),
+                  keyInit: normalizeName(currentContributor.name)
+                });
 
                 // Disable the save button
                 parentBtn.style.pointerEvents = 'none';
