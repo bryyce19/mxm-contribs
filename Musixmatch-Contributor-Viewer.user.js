@@ -2,8 +2,8 @@
 // @name         Musixmatch-Contributor-Viewer
 // @author       Bryce
 // @namespace    http://tampermonkey.net/
-// @version      5.1.1
-// @description  Version 5.1.1 is an emergency patch that fixes a critical bug where contributor names containing a period (e.g., "Mangezi R.") were incorrectly displayed and formatted throughout the UI, including the contributor list and overwrite popup.
+// @version      5.2.1
+// @description  Version 5.2.1 adds a new "Copy Abstrack" button to easily copy and paste the song's abstrack -- even before the page loads fully
 // @match        https://curators.musixmatch.com/*
 // @match        https://curators-beta.musixmatch.com/*
 // @grant        GM_xmlhttpRequest
@@ -447,6 +447,75 @@
         closeX.onclick = () => panel.style.display = 'none';
         panel.appendChild(closeX);
         panel.appendChild(themeToggle);
+        
+        // --- add copy track id button ---
+        const copyTrackIdBtn = document.createElement('button');
+        copyTrackIdBtn.textContent = '📋'; // unicode clipboard emoji
+        copyTrackIdBtn.title = 'Copy abstract'; // default browser tooltip
+        copyTrackIdBtn.setAttribute('aria-label', 'Copy abstract');
+        copyTrackIdBtn.style = `
+          position: absolute;
+          top: 10px;
+          right: 64px;
+          background: transparent;
+          border: none;
+          color: ${isDark ? '#fff' : '#222'};
+          font-size: 14px;
+          cursor: pointer;
+          z-index: 100001;
+          padding: 0 2px;
+          height: 24px;
+          width: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        `;
+        // ensure themeToggle matches for alignment and font size
+        themeToggle.style.fontSize = '14px';
+        themeToggle.style.height = '24px';
+        themeToggle.style.width = '24px';
+        themeToggle.style.display = 'flex';
+        themeToggle.style.alignItems = 'center';
+        themeToggle.style.justifyContent = 'center';
+        themeToggle.style.top = '10px';
+        
+        copyTrackIdBtn.onclick = async (e) => {
+          e.stopPropagation();
+          try {
+            await navigator.clipboard.writeText(lastTaskId || '');
+            // create custom floating popup
+            const popup = document.createElement('div');
+            popup.textContent = 'Copied Abstrack!';
+            popup.style = `
+              position: absolute;
+              background: ${isDark ? '#222' : '#eee'};
+              color: ${isDark ? '#fff' : '#111'};
+              border-radius: 4px;
+              padding: 2px 8px;
+              font-size: 12px;
+              box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+              opacity: 0.97;
+              z-index: 100002;
+              pointer-events: none;
+              transition: opacity 0.2s;
+              white-space: nowrap;
+            `;
+            copyTrackIdBtn.parentNode.appendChild(popup);
+            // position popup centered below the button
+            const btnRect = copyTrackIdBtn.getBoundingClientRect();
+            const panelRect = panel.getBoundingClientRect();
+            const popupLeft = btnRect.left - panelRect.left + (btnRect.width - popup.offsetWidth) / 2;
+            popup.style.left = Math.max(0, popupLeft) + 'px';
+            popup.style.top = (btnRect.bottom - panelRect.top + 2) + 'px';
+            setTimeout(() => {
+              if (popup.parentNode) popup.parentNode.removeChild(popup);
+            }, 1500);
+          } catch (err) {
+            // optionally handle error
+          }
+        };
+        panel.appendChild(copyTrackIdBtn);
+        // --- end copy track id button ---
 
     // add most recent section
     const mostRecent = filtered[0];
@@ -1056,6 +1125,75 @@
           Loading contributors
         </div>`;
       panel.appendChild(loadingContent);
+
+      // --- add copy track id button to loading state ---
+      const copyTrackIdBtn = document.createElement('button');
+      copyTrackIdBtn.textContent = '📋'; // unicode clipboard emoji
+      copyTrackIdBtn.title = 'Copy abstract'; // default browser tooltip
+      copyTrackIdBtn.setAttribute('aria-label', 'Copy abstract');
+      copyTrackIdBtn.style = `
+        position: absolute;
+        top: 10px;
+        right: 64px;
+        background: transparent;
+        border: none;
+        color: ${isDark ? '#fff' : '#222'};
+        font-size: 14px;
+        cursor: pointer;
+        z-index: 100001;
+        padding: 0 2px;
+        height: 24px;
+        width: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      `;
+      // ensure themeToggle matches for alignment and font size
+      themeToggle.style.fontSize = '14px';
+      themeToggle.style.height = '24px';
+      themeToggle.style.width = '24px';
+      themeToggle.style.display = 'flex';
+      themeToggle.style.alignItems = 'center';
+      themeToggle.style.justifyContent = 'center';
+      themeToggle.style.top = '10px';
+      
+      copyTrackIdBtn.onclick = async (e) => {
+        e.stopPropagation();
+        try {
+          await navigator.clipboard.writeText(lastTaskId || '');
+          // create custom floating popup
+          const popup = document.createElement('div');
+          popup.textContent = 'Copied Abstrack!';
+          popup.style = `
+            position: absolute;
+            background: ${isDark ? '#222' : '#eee'};
+            color: ${isDark ? '#fff' : '#111'};
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 12px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+            opacity: 0.97;
+            z-index: 100002;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+          `;
+          copyTrackIdBtn.parentNode.appendChild(popup);
+          // position popup centered below the button
+          const btnRect = copyTrackIdBtn.getBoundingClientRect();
+          const panelRect = panel.getBoundingClientRect();
+          const popupLeft = btnRect.left - panelRect.left + (btnRect.width - popup.offsetWidth) / 2;
+          popup.style.left = Math.max(0, popupLeft) + 'px';
+          popup.style.top = (btnRect.bottom - panelRect.top + 2) + 'px';
+          setTimeout(() => {
+            if (popup.parentNode) popup.parentNode.removeChild(popup);
+          }, 1500);
+        } catch (err) {
+          // optionally handle error
+        }
+      };
+      panel.appendChild(copyTrackIdBtn);
+      // --- end copy track id button for loading state ---
 
       // Try to fetch the data
       const contributors = await fetchContributorData(lyricsURL);
