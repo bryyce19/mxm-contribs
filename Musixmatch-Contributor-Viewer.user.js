@@ -4,6 +4,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      5.2.1
 // @description  Version 5.2.1 adds a new "Copy Abstrack" button to easily copy and paste the song's abstrack -- even before the page loads fully
+// @icon         https://raw.githubusercontent.com/bryyce19/mxm-contribs/refs/heads/main/img/finallogosquare.png
 // @match        https://curators.musixmatch.com/*
 // @match        https://curators-beta.musixmatch.com/*
 // @grant        GM_xmlhttpRequest

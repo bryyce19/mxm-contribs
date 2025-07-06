@@ -1,11 +1,13 @@
 // ==UserScript==
-// @name         Musixmatch Staff Indicator
+// @name         Musixmatch Staff Viewer
 // @author       Bryce
 // @namespace    http://tampermonkey.net/
-// @version      1.0
-// @description  DO NOT INSTALL THIS YET 
+// @version      1.1
+// @description  [BETA - BUGS EXIST!] This script adds a staff badge to the profile header of Musixmatch curators and specialists. Note that this is not a complete list of staff, and is not updated automatically.
 // @match        https://www.musixmatch.com/profile/*
 // @grant        none
+// @updateURL    https://github.com/bryyce19/mxm-contribs/raw/refs/heads/main/Staff-Viewer.user.js
+// @downloadURL  https://github.com/bryyce19/mxm-contribs/raw/refs/heads/main/Staff-Viewer.user.js
 // ==/UserScript==
 
 
