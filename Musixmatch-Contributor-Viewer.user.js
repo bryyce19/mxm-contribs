@@ -429,7 +429,7 @@
   
     const renderContributors = (filtered) => {
         if (!filtered || filtered.length === 0) {
-            showMessage(`⚠️ No contributor data found for this track. If this is a song with no previous contributions, you can safely ignore this warning. Contact Bryce M. on Slack if you think this is a mistake!`);
+            showMessage(`⚠️No contributor data found for this track`);
             return;
         }
 
@@ -732,79 +732,209 @@
     };
   
     const showMessage = (msg, color = '#aaa') => {
-    const isError = msg.includes('❌') || msg.includes('⚠️');
-    const icon = isError ?
-      (msg.includes('❌') ?
-        '<i class="fas fa-exclamation-circle" style="color: red; font-size: 24px; margin-bottom: 12px;"></i>' :
-        '<i class="fas fa-exclamation-triangle" style="color: #ffbb00; font-size: 24px; margin-bottom: 12px;"></i>') :
-      '<i class="fas fa-info-circle" style="color: #4EA9FF; font-size: 24px; margin-bottom: 12px;"></i>';
-
-    // Log error details in debug mode
-    if (debugMode && isError) {
-      if (msg.includes('Contributors only available')) {
-        debugLog('Error: User tried to access contributors on non-tool page');
-        debugLog('Current pathname:', location.pathname);
-      } else if (msg.includes('Please open the track info tab')) {
-        debugLog('Error: Track info tab not opened');
-        debugLog('Current lyrics URL:', button.dataset.lyricsUrl);
-        debugLog('Current task ID:', lastTaskId);
-        debugLog('URL task ID:', new URLSearchParams(location.search).get('commontrack_id'));
-      } else if (msg.includes('Failed to load contributor data')) {
-        debugLog('Error: Failed to fetch contributor data');
-        debugLog('Last lyrics URL:', lastLyricsUrl);
-        debugLog('Current contributors:', currentPageContributors);
-      }
+    // determine icon and color based on message content
+    let icon, borderColor, bgColor;
+    
+    if (msg.includes('❌')) {
+      icon = '<i class="fas fa-exclamation-circle" style="color: #ff4444; font-size: 24px;"></i>';
+      borderColor = '#ff4444';
+      bgColor = isDark ? '#2a2a2a' : '#f8f8f8';
+    } else if (msg.includes('⚠️')) {
+      icon = '<i class="fas fa-exclamation-triangle" style="color: #ffbb00; font-size: 24px;"></i>';
+      borderColor = '#ffbb00';
+      bgColor = isDark ? '#2a2a2a' : '#f8f8f8';
+    } else {
+      icon = '<i class="fas fa-info-circle" style="color: #4EA9FF; font-size: 24px;"></i>';
+      borderColor = '#4EA9FF';
+      bgColor = isDark ? '#2a2a2a' : '#f8f8f8';
     }
 
-    // replace default emoji -- easier than going 1 by 1 to relplace each w/ fa icon
+    // clean message (remove emojis)
     const cleanMsg = msg.replace(/[❌⚠️]/, '').trim();
 
-    // subtitles
-    let subtitle = '';
-    if (msg.includes('/tool')) {
-      subtitle = 'Please navigate to a track\'s studio page to view contributors.';
+    // Create technical info
+    const technicalInfo = {
+      'Track ID': lastTaskId || 'Not available',
+      'Lyrics URL': button.dataset.lyricsUrl || 'Not available',
+      'Current Page': window.location.href,
+      'Contributors Found': currentPageContributors.length,
+      'Permission Data': Object.keys(permissionData).length + ' entries loaded',
+      'Last Fetch': lastLyricsUrl ? new Date().toLocaleTimeString() : 'Never',
+      'User Agent': navigator.userAgent.substring(0, 50) + '...',
+      'Script Version': '5.2.1',
+      'Debug Mode': debugMode ? 'Enabled' : 'Disabled',
+      'Theme': isDark ? 'Dark' : 'Light',
+      'Panel Display': panel.style.display === 'block' ? 'Visible' : 'Hidden',
+      'Button Display': button.style.display === 'block' ? 'Visible' : 'Hidden',
+      'Page Load Time': new Date().toLocaleTimeString(),
+      'URL Parameters': location.search || 'None',
+      'Referrer': document.referrer || 'None',
+      'Viewport Size': `${window.innerWidth}x${window.innerHeight}`,
+      'Screen Size': `${screen.width}x${screen.height}`,
+      'Language': navigator.language || 'Unknown',
+      'Online Status': navigator.onLine ? 'Online' : 'Offline',
+      'Cookie Enabled': navigator.cookieEnabled ? 'Yes' : 'No',
+      'Do Not Track': navigator.doNotTrack || 'Not set',
+      'Memory Usage': performance.memory ? `${Math.round(performance.memory.usedJSHeapSize / 1024 / 1024)}MB used / ${Math.round(performance.memory.totalJSHeapSize / 1024 / 1024)}MB total` : 'Not available',
+      'Time Origin': new Date(performance.timeOrigin).toLocaleTimeString()
+    };
+
+    // Create next steps based on message content
+    let nextSteps = '';
+    if (msg.includes('No contributor data found')) {
+      nextSteps = `
+        <div style="margin-top: 16px; padding: 12px; background: ${bgColor}; border-radius: 8px; border-left: 3px solid ${borderColor};">
+          <div style="font-weight: 600; color: ${isDark ? '#fff' : '#000'}; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+            <i class="fas fa-lightbulb" style="color: ${borderColor};"></i>
+            Next Steps
+          </div>
+          <ul style="margin: 0; padding-left: 16px; color: ${isDark ? '#ccc' : '#555'}; font-size: 13px; line-height: 1.4;">
+            <li>If this is a new track, you can safely proceed with your work</li>
+            <li>Manually check the <a href="${button.dataset.lyricsUrl || '#'}" target="_blank" style="color: ${borderColor}; text-decoration: none;">song page</a> before continuing</li>
+            <li>Contact Bryce M. on Slack if you believe this is an error</li>
+          </ul>
+        </div>
+      `;
+    } else if (msg.includes('/tool')) {
+      nextSteps = `
+        <div style="margin-top: 16px; padding: 12px; background: ${bgColor}; border-radius: 8px; border-left: 3px solid ${borderColor};">
+          <div style="font-weight: 600; color: ${isDark ? '#fff' : '#000'}; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+            <i class="fas fa-external-link-alt" style="color: ${borderColor};"></i>
+            Action Required
+          </div>
+          <div style="color: ${isDark ? '#ccc' : '#555'}; font-size: 13px; line-height: 1.4;">
+            Navigate to a track's studio page (URL contains <code>/tool</code>) to view contributors.
+          </div>
+        </div>
+      `;
     } else if (msg.includes('track info tab')) {
-      subtitle = 'The track info tab must be opened first to load contributor data.';
+      nextSteps = `
+        <div style="margin-top: 16px; padding: 12px; background: ${bgColor}; border-radius: 8px; border-left: 3px solid ${borderColor};">
+          <div style="font-weight: 600; color: ${isDark ? '#fff' : '#000'}; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+            <i class="fas fa-info-circle" style="color: ${borderColor};"></i>
+            Required Action
+          </div>
+          <div style="color: ${isDark ? '#ccc' : '#555'}; font-size: 13px; line-height: 1.4;">
+            Open the track info tab first to load contributor data for this song.
+          </div>
+        </div>
+      `;
     } else if (msg.includes('Failed to load')) {
-      subtitle = 'Please try refreshing the page or contact Bryce on Slack if the issue persists.';
+      nextSteps = `
+        <div style="margin-top: 16px; padding: 12px; background: ${bgColor}; border-radius: 8px; border-left: 3px solid ${borderColor};">
+          <div style="font-weight: 600; color: ${isDark ? '#fff' : '#000'}; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+            <i class="fas fa-tools" style="color: ${borderColor};"></i>
+            Troubleshooting
+          </div>
+          <ul style="margin: 0; padding-left: 16px; color: ${isDark ? '#ccc' : '#555'}; font-size: 13px; line-height: 1.4;">
+            <li>Refresh the page and try again</li>
+            <li>Check your internet connection</li>
+            <li>Contact Bryce on Slack if the issue persists</li>
+          </ul>
+        </div>
+      `;
     }
+
+    // Create technical info dropdown
+    const technicalInfoHtml = `
+      <div style="margin-top: 12px;">
+        <button id="mxm-tech-toggle" style="
+          background: ${isDark ? '#333' : '#f0f0f0'};
+          border: 1px solid ${isDark ? '#555' : '#ddd'};
+          border-radius: 6px;
+          padding: 8px 12px;
+          color: ${isDark ? '#ccc' : '#666'};
+          font-size: 12px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          width: 100%;
+          text-align: left;
+          transition: all 0.2s ease;
+        ">
+          <i class="fas fa-code" style="color: #FC542E;"></i>
+          Technical Information
+          <i class="fas fa-chevron-down" style="margin-left: auto; transition: transform 0.2s ease;"></i>
+        </button>
+        <div id="mxm-tech-content" style="
+          display: none;
+          margin-top: 8px;
+          padding: 12px;
+          background: ${isDark ? '#1a1a1a' : '#fafafa'};
+          border-radius: 6px;
+          border: 1px solid ${isDark ? '#333' : '#eee'};
+          font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+          font-size: 11px;
+          line-height: 1.4;
+          color: ${isDark ? '#ccc' : '#666'};
+          max-height: 200px;
+          overflow-y: auto;
+        ">
+          ${Object.entries(technicalInfo).map(([key, value]) => 
+            `<div style="margin-bottom: 4px;"><span style="color: #FC542E;">${key}:</span> ${value}</div>`
+          ).join('')}
+        </div>
+      </div>
+    `;
 
     panel.innerHTML = `
       <div class="fade-in" style="
         color: ${isDark ? color : '#111'};
-        text-align: center;
-        padding: 24px 16px;
+        text-align: left;
+        padding: 20px 16px;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
+        gap: 12px;
       ">
-        ${icon}
-        <div style="
-          font-size: 16px;
-          font-weight: 500;
-          margin-bottom: ${subtitle ? '8px' : '0'};
-        ">${cleanMsg}</div>
-        ${subtitle ? `<div style="
-          font-size: 13px;
-          color: ${isDark ? '#888' : '#666'};
-          max-width: 280px;
-          line-height: 1.4;
-        ">${subtitle}</div>` : ''}
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+          ${icon}
+          <div style="
+            font-size: 16px;
+            font-weight: 600;
+            color: ${isDark ? '#fff' : '#000'};
+          ">${cleanMsg}</div>
+        </div>
+        ${nextSteps}
+        ${technicalInfoHtml}
       </div>`;
 
-      const closeX = document.createElement('span');
-      closeX.textContent = '✖';
-      closeX.className = 'mxm-close-button';
-      closeX.style = `position: absolute; top: 10px; right: 12px; cursor: pointer; font-size: 16px; color: ${isDark ? '#fff' : '#222'};`;
-      closeX.onclick = () => panel.style.display = 'none';
-      panel.appendChild(closeX);
-      panel.appendChild(themeToggle);
-      panel.style.display = 'block';
-      jumpButtons.style.display = 'none';
-    };
-  
+    // Add dropdown functionality
+    setTimeout(() => {
+      const toggleBtn = document.getElementById('mxm-tech-toggle');
+      const content = document.getElementById('mxm-tech-content');
+      const chevron = toggleBtn?.querySelector('.fa-chevron-down');
+      
+      if (toggleBtn && content) {
+        toggleBtn.onclick = () => {
+          const isOpen = content.style.display === 'block';
+          content.style.display = isOpen ? 'none' : 'block';
+          if (chevron) {
+            chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+          }
+        };
+        
+        // Hover effects
+        toggleBtn.onmouseenter = () => {
+          toggleBtn.style.background = isDark ? '#444' : '#e8e8e8';
+        };
+        toggleBtn.onmouseleave = () => {
+          toggleBtn.style.background = isDark ? '#333' : '#f0f0f0';
+        };
+      }
+    }, 100);
+
+    const closeX = document.createElement('span');
+    closeX.textContent = '✖';
+    closeX.className = 'mxm-close-button';
+    closeX.style = `position: absolute; top: 10px; right: 12px; cursor: pointer; font-size: 16px; color: ${isDark ? '#fff' : '#222'};`;
+    closeX.onclick = () => panel.style.display = 'none';
+    panel.appendChild(closeX);
+    panel.appendChild(themeToggle);
+    panel.style.display = 'block';
+    jumpButtons.style.display = 'none';
+  };
+
   const observer = new MutationObserver(mutations => {
     for (const m of mutations) {
       for (const node of m.addedNodes) {
