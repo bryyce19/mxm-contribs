@@ -400,6 +400,56 @@
       margin: 0;
       padding: 0;
     }
+    .modern-warning {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      background: #fffbe6;
+      color: #8a6d3b;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(255, 205, 0, 0.08);
+      padding: 18px 24px;
+      margin: 24px auto 0 auto;
+      max-width: 800px;
+      font-size: 16px;
+      font-weight: 500;
+      position: relative;
+      z-index: 100;
+      transition: box-shadow 0.2s;
+      text-align: left;
+    }
+    .modern-warning-icon {
+      flex-shrink: 0;
+      font-size: 28px;
+      margin-top: 2px;
+      color: #ffb300;
+      filter: drop-shadow(0 1px 0 #fff9c4);
+    }
+    .modern-warning-text {
+      text-align: left;
+    }
+    .modern-warning-text a {
+      color: #b8860b;
+      text-decoration: underline;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .modern-warning-text a:hover {
+      color: #ff9800;
+    }
+    @media screen and (max-width: 600px) {
+      .modern-warning {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 14px 10px;
+        font-size: 14px;
+        gap: 8px;
+      }
+      .modern-warning-icon {
+        font-size: 22px;
+        margin-bottom: 2px;
+      }
+    }
   </style>
 </head>
 
@@ -439,6 +489,12 @@
           </a>
         </div>
       </div>
+    </div>
+  </div>
+  <div class="modern-warning">
+    <div class="modern-warning-icon"><i class="fas fa-exclamation-triangle"></i></div>
+    <div class="modern-warning-text">
+      This documentation is <strong>outdated</strong> and missing some feature explanations. For the latest install guide, check out the <a href="https://lyricscurators.slack.com/archives/GMSNG2QGZ/p1752254210059449?thread_ts=1752242168.763869&cid=GMSNG2QGZ" target="_blank">video on Slack</a>!
     </div>
   </div>
 

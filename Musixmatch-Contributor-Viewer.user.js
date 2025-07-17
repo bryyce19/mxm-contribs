@@ -2,8 +2,8 @@
 // @name         Musixmatch-Contributor-Viewer
 // @author       Bryce
 // @namespace    http://tampermonkey.net/
-// @version      5.2.1
-// @description  Version 5.2.1 adds a new "Copy Abstrack" button to easily copy and paste the song's abstrack -- even before the page loads fully
+// @version      5.3.0
+// @description  Version 5.3.0 includes small UI updates as well as an auto-refresh functionality when opening a new task to prevent stale data. You can also resize the panel on the x-axis by clicking and dragging the left edge of the panel.
 // @icon         https://raw.githubusercontent.com/bryyce19/mxm-contribs/refs/heads/main/img/finallogosquare.png
 // @match        https://curators.musixmatch.com/*
 // @match        https://curators-beta.musixmatch.com/*
@@ -39,6 +39,13 @@
   let hasAcknowledgedWarning = false;
   let debugMode = false;
   let currentPageContributors = []; // track contributors for current page only
+  
+  // Simple resize variables
+  let isResizing = false;
+  let startX = 0;
+  let startWidth = 0;
+  const MIN_WIDTH = 300; // Minimum width
+  const MAX_WIDTH = window.innerWidth / 2; // Half screen width
 
   // enhanced debugging log funcction
   const debugLog = (...args) => {
@@ -100,19 +107,21 @@
   
     const normalizeName = name => {
     if (!name) return '';
-      const parts = name.trim().split(' ').filter(part => part.length > 0);
-      if (parts.length === 0) return '';
-      if (parts.length === 1) return parts[0].toLowerCase();
-      
-      // Handle cases where second part is just a single letter (with or without period)
-      const secondPart = parts[1].replace(/\.$/, ''); // Remove trailing period
-      if (secondPart.length === 1) {
-        return `${parts[0].toLowerCase()} ${secondPart.toLowerCase()}`;
-      }
-      
-      // Original logic for longer second parts
+    const parts = name.trim().split(' ').filter(part => part.length > 0);
+    if (parts.length === 0) return '';
+    if (parts.length === 1) return parts[0].toLowerCase();
+
+    // Handle cases where second part is just a single letter (with or without period)
+    const secondPart = parts[1].replace(/\.$/, ''); // Remove trailing period
+    if (secondPart.length === 1) {
+      return `${parts[0].toLowerCase()} ${secondPart.toLowerCase()}`;
+    }
+    if (secondPart.length > 1) {
       return `${parts[0].toLowerCase()} ${secondPart[0].toLowerCase()}`;
-    };
+    }
+    // If secondPart is empty, just return the first part
+    return parts[0].toLowerCase();
+  };
   
     const fetchPermissionData = () => new Promise(resolve => {
     const startTime = Date.now();
@@ -271,16 +280,25 @@
         transform: scale(1.1);
         opacity: 1;
       }
+      
+      /* Make the panel itself resizable on the left edge */
+      .mxm-panel.resizable-left {
+        cursor: ew-resize;
+      }
     `;
     document.head.appendChild(style);
   
+    // Get saved panel width or use default
+    const savedWidth = localStorage.getItem('mxmPanelWidth');
+    const panelWidth = savedWidth ? Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, parseInt(savedWidth))) : 360;
+    
     const panel = document.createElement('div');
     panel.className = 'mxm-panel';
     panel.style = `
       position: fixed;
-    top: 100px;
+      top: 100px;
       right: 20px;
-      width: 360px;
+      width: ${panelWidth}px;
       max-height: 70vh;
       overflow-y: auto;
       background: #1e1e1e;
@@ -289,12 +307,14 @@
       font-size: 14px;
       border: 1px solid #444;
       border-radius: 10px;
-    padding: 1.2em;
+      padding: 1.2em;
       box-shadow: 0 8px 16px rgba(0,0,0,0.4);
       display: none;
-    z-index: 9999999;
+      z-index: 9999999;
     `;
     document.body.appendChild(panel);
+    
+
   
     const jumpButtons = document.createElement('div');
     jumpButtons.className = 'jump-buttons';
@@ -378,6 +398,8 @@
       /background-color: #[0-9a-fA-F]{3,6}/,
       `background-color: ${isDark ? '#444' : '#ddd'}`
     );
+    
+
 
     // Update button styles without changing display property
     const buttonStyles = {
@@ -406,6 +428,42 @@
   // Call applyTheme when the script starts
   applyTheme();
 
+  // Simple resize functionality
+  const startResize = (e) => {
+    const rect = panel.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    
+    if (clickX <= 10) {
+      e.preventDefault();
+      isResizing = true;
+      startX = e.clientX;
+      startWidth = parseInt(panel.style.width);
+      panel.classList.add('resizable-left');
+    }
+  };
+
+  const doResize = (e) => {
+    if (!isResizing) return;
+    
+    const deltaX = startX - e.clientX;
+    const newWidth = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, startWidth + deltaX));
+    panel.style.width = `${newWidth}px`;
+  };
+
+  const stopResize = () => {
+    if (isResizing) {
+      const finalWidth = parseInt(panel.style.width);
+      localStorage.setItem('mxmPanelWidth', finalWidth.toString());
+    }
+    isResizing = false;
+    panel.classList.remove('resizable-left');
+  };
+
+  // Add resize event listeners directly to panel
+  panel.addEventListener('mousedown', startResize);
+  document.addEventListener('mousemove', doResize);
+  document.addEventListener('mouseup', stopResize);
+
     themeToggle.onclick = updateTheme;
   
     const renderDropdown = (entries = []) => {
@@ -427,7 +485,7 @@
       return el;
     };
   
-    const renderContributors = (filtered) => {
+    const renderContributors = (filtered, isAutoRefresh = false) => {
         if (!filtered || filtered.length === 0) {
             showMessage(`⚠️No contributor data found for this track`);
             return;
@@ -437,10 +495,26 @@
         debugLog('Rendering contributors:', {
           totalContributors: filtered.length,
           firstContributor: filtered[0],
-          allContributors: filtered.map(c => ({ name: c.name, role: c.role, type: c.type }))
+          allContributors: filtered.map(c => ({ name: c.name, role: c.role, type: c.type })),
+          isAutoRefresh
         });
 
-        panel.innerHTML = '<strong style="font-size: 1.3em; display:block; margin-bottom: 12px;">Contributors</strong>';
+        //  auto-refresh indicator if this is an auto-refresh --- note to self: edit this to look nicer later on
+        const titleText = isAutoRefresh ? 
+          '<strong style="font-size: 1.3em; display:block; margin-bottom: 12px;">Contributors <span id="mxm-refresh-indicator" style="font-size: 0.8em; color: #FC542E; font-weight: normal;">refreshing...</span></strong>' :
+          '<strong style="font-size: 1.3em; display:block; margin-bottom: 12px;">Contributors</strong>';
+
+        panel.innerHTML = titleText;
+        
+        // Remove refresh indicator after 3 seconds if this is an auto-refresh
+        if (isAutoRefresh) {
+          setTimeout(() => {
+            const indicator = panel.querySelector('#mxm-refresh-indicator');
+            if (indicator) {
+              indicator.textContent = '';
+            }
+          }, 3000);
+        }
   
         const closeX = document.createElement('span');
         closeX.textContent = '✖';
@@ -999,6 +1073,12 @@
           fetchContributorData(lyricsUrl).then(contributors => {
             if (contributors) {
               currentPageContributors = contributors;
+              
+              // Auto-refresh panel if it's already open
+              if (panel.style.display === 'block') {
+                debugLog('Panel is open, auto-refreshing with new contributors');
+                renderContributors(contributors, true);
+              }
             }
           });
         return;
@@ -1037,6 +1117,12 @@
               fetchContributorData(url).then(contributors => {
                 if (contributors) {
                   currentPageContributors = contributors;
+                  
+                  // Auto-refresh panel if it's already open
+                  if (panel.style.display === 'block') {
+                    debugLog('Panel is open, auto-refreshing with new contributors');
+                    renderContributors(contributors);
+                  }
                 }
               });
             }
@@ -1329,13 +1415,13 @@
       // Try to fetch the data
       const contributors = await fetchContributorData(lyricsURL);
       if (contributors) {
-        renderContributors(contributors);
+        renderContributors(contributors, false);
       }
       return;
     }
 
     // If we have data, render it immediately
-    renderContributors(currentPageContributors);
+    renderContributors(currentPageContributors, false);
   };
 
   // Move menuItems definition to top-level scope so it's accessible in the event handler
@@ -1358,7 +1444,12 @@
         localStorage.setItem('mxmMyName', name.trim());
         alert('Your name has been saved!');
       }
-    }}
+    }},
+    { text: '📏 Reset Panel Size', action: () => {
+      panel.style.width = '360px';
+      localStorage.removeItem('mxmPanelWidth');
+    }},
+
   ];
 
   // add context menu to button
