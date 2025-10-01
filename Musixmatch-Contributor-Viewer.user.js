@@ -2,8 +2,8 @@
 // @name         Musixmatch-Contributor-Viewer
 // @author       Bryce
 // @namespace    http://tampermonkey.net/
-// @version      5.3.0
-// @description  Version 5.3.0 includes small UI updates as well as an auto-refresh functionality when opening a new task to prevent stale data. You can also resize the panel on the x-axis by clicking and dragging the left edge of the panel.
+// @version      5.3.1
+// @description  Version 5.3.1 adds a troubleshooting step when contributor data fails to load. Thanks for using the script! Quick reminder to reach out to me on Slack if you have any suggestions or issues.
 // @icon         https://raw.githubusercontent.com/bryyce19/mxm-contribs/refs/heads/main/img/finallogosquare.png
 // @match        https://curators.musixmatch.com/*
 // @match        https://curators-beta.musixmatch.com/*
@@ -499,7 +499,7 @@
           isAutoRefresh
         });
 
-        //  auto-refresh indicator if this is an auto-refresh --- note to self: edit this to look nicer later on
+        //  auto-refresh indicator if this is an auto-refresh -- needs styling update
         const titleText = isAutoRefresh ? 
           '<strong style="font-size: 1.3em; display:block; margin-bottom: 12px;">Contributors <span id="mxm-refresh-indicator" style="font-size: 0.8em; color: #FC542E; font-weight: normal;">refreshing...</span></strong>' :
           '<strong style="font-size: 1.3em; display:block; margin-bottom: 12px;">Contributors</strong>';
