@@ -901,6 +901,9 @@
             Troubleshooting
           </div>
           <ul style="margin: 0; padding-left: 16px; color: ${isDark ? '#ccc' : '#555'}; font-size: 13px; line-height: 1.4;">
+            <li>If the song displays "Unfortunately we're not authorized
+                to show these lyrics..." when logged out, the script cannot fetch the lyrics</li>
+            <li>If this is a new song, there may be no contributors yet, and you can safely continue working</li>
             <li>Refresh the page and try again</li>
             <li>Check your internet connection</li>
             <li>Contact Bryce on Slack if the issue persists</li>
@@ -1299,7 +1302,7 @@
         songInfo,
         fetchDuration: Date.now() - startTime
       });
-      showMessage('⚠️ Failed to load contributor data. If this is a new track, you can safely ignore this warning.', 'orange');
+      showMessage('⚠️ Failed to load contributor data.', 'orange');
       return null;
     });
   };
