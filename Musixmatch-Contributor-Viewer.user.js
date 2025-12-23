@@ -2,8 +2,8 @@
 // @name         Musixmatch-Contributor-Viewer
 // @author       Bryce
 // @namespace    http://tampermonkey.net/
-// @version      5.4.0
-// @description  VERSION 5.4.0: a brand-new experience! Contributor data now loads within the assistant interface, making the script seamlessly integrated into the Musixmatch studio.
+// @version      5.4.1
+// @description  Fixed a critical bug where the overwrite popup would either not appear when clicking the save button or would appear infinitely when clicking "Proceed". Improved reliability of the save button interceptor.
 // @icon         https://raw.githubusercontent.com/bryyce19/mxm-contribs/refs/heads/main/img/finallogosquare.png
 // @match        https://curators.musixmatch.com/*
 // @match        https://curators-beta.musixmatch.com/*
@@ -1819,7 +1819,7 @@
     return popup;
   };
 
-  // add save button interceptor
+  // use Capture Phase Event Delegation ... thank you, Mangezi :-)
   let isObserverActive = false;
   
   const interceptSaveButton = () => {
@@ -1829,13 +1829,13 @@
       return;
     }
 
-    console.log('[MXM Interceptor] Starting save button interceptor...');
-    debugLog('Starting save button interceptor...');
+    console.log('[MXM Interceptor] Starting global save button interceptor (Capture Phase)...');
+    debugLog('Starting global save button interceptor (Capture Phase)...');
     debugState.lastAction = 'interceptSaveButton';
     debugState.actionCount++;
   
-    // List of Send button texts in various languages
-    const sendButtonTexts = [
+    // List of Send button texts in various languages (using Set for O(1) lookup) - ** note to self: review later 
+    const sendButtonTexts = new Set([
       'إرسال',      // Arabic
       'পাঠাও',      // Assamese
       'পাঠান',      // Bengali
@@ -1846,24 +1846,21 @@
       '发送',       // Chinese
       'Pošalji',    // Croatian
       'Odeslat',    // Czech
-      'Send',       // Danish
+      'Send',       // Danish/English
       'Versturen',  // Dutch
-      'Send',       // English
       'Lähetä',     // Finnish
       'Envoyer',    // French
       'Senden',     // German
       'Στείλε',     // Greek
       'Voye',       // Haitian Creole
-      'भेजें',      // Haryanvi
+      'भेजें',      // Haryanvi/Hindi
       'Aika',       // Hausa
       'שלח',        // Hebrew
-      'भेजें',      // Hindi
       'Küldés',     // Hungarian
       'Ziga',       // Igbo
-      'Kirim',      // Indonesian
+      'Kirim',      // Indonesian/Javanese/Sundanese
       'Invia',      // Italian
       '送信',       // Japanese
-      'Kirim',      // Javanese
       '보내기',     // Korean
       'Tinda',      // Lingála
       'Hantar',     // Malay
@@ -1875,376 +1872,167 @@
       'ارسال',      // Persian
       'ਭੇਜੋ',       // Punjabi
       'Wyślij',     // Polish
-      'Enviar',     // Portuguese
+      'Enviar',     // Portuguese/Spanish
       'Trimite',    // Romanian
       'Отправить',  // Russian
       'प्रेषय',     // Sanskrit
       'Tumira',     // Shona
       'Odoslať',    // Slovak
-      'Enviar',     // Spanish
-      'Kirim',      // Sundanese
       'Skicka',     // Swedish
       'Ipadala',    // Tagalog
       'அனுப்பு',    // Tamil
       'పంపండి',     // Telugu
       'ส่ง',        // Thai
-      'Rhumela',    // Tsonga
+      'Rhumela',    // Tsonga/Venda
       'Gönder',     // Turkish
       'Надіслати',  // Ukrainian
       'بھیجیں',     // Urdu
-      'Rhumela',    // Venda
       'Gửi',        // Vietnamese
       'Ránṣẹ́',     // Yoruba
-      'Thumela',    // Xhosa
-      'Thumela'     // Zulu
-    ];
+      'Thumela'     // Xhosa/Zulu
+    ]);
 
-    // Function to check and intercept a button element
-    const checkAndInterceptButton = (sendButton, source = 'unknown') => {
-      if (!sendButton) return false;
+    // add a single listener to the document in the capture phase
+    // This runs before Musixmatchs own event listeners
+    // The 'true' parameter enables capture phase !!!!
+    document.addEventListener('click', (e) => {
+      const clickStartTime = Date.now();
+      const isUserClick = e.isTrusted; // true for user clicks, false for programmatic
       
-      const buttonText = sendButton.textContent?.trim();
-      if (!sendButtonTexts.includes(buttonText)) {
-        debugLog(`Button text "${buttonText}" not in send button list (source: ${source})`);
-        return false;
-      }
-
-      console.log('[MXM Interceptor] Found Send button:', {
-        text: buttonText,
-        source: source,
-        timestamp: new Date().toISOString()
-      });
-      debugLog('Found Send button:', {
-        text: buttonText,
-        source: source,
-        parent: sendButton.closest('[tabindex="0"]')?.className,
-        timestamp: new Date().toISOString()
-      });
-
-      // get the parent button element - try multiple selectors
-      // Works in both light mode (css-g5y9jx) and dark mode (css-175oi2r)
-      let parentBtn = sendButton.closest('[tabindex="0"]');
-      if (!parentBtn) {
-        // Try alternative: look for button parent
-        parentBtn = sendButton.closest('button') || sendButton.closest('[role="button"]') || sendButton.parentElement;
-        debugLog('Using alternative parent selector for button');
-      }
-      
-      if (!parentBtn) {
-        debugLog('Could not find parent button element');
-        return false;
-      }
-
-      // check if we've already added the listener
-      if (parentBtn.hasAttribute('data-mxm-intercepted')) {
-        debugLog('Button already intercepted, skipping...');
-        return true; // Already handled
-      }
-
-      // mark as intercepted
-      parentBtn.setAttribute('data-mxm-intercepted', 'true');
-      console.log('[MXM Interceptor] Adding click interceptor to Send button');
-      debugLog('Adding click interceptor to Send button');
-
-      // add our interceptor - use capture phase to catch early
-      parentBtn.addEventListener('click', async (e) => {
-        const clickStartTime = Date.now();
-        
-        // CRITICAL: Reset flag at the START of each click handler
-        // This ensures the popup shows every time until user explicitly confirms
+      // Critical: Only reset flag for user-initiated clicks
+      // Programmatic clicks (after "Proceed Anyway") should use the existing flag value (i think this is correct, review)
+      if (isUserClick) {
         hasAcknowledgedWarning = false;
-        
-        console.log('[MXM Interceptor] Send button clicked - flag reset');
-        debugLog('Send button clicked');
-        debugState.lastAction = 'sendButtonClick';
-        debugState.actionCount++;
-
-        // Use contributor data that's already been fetched by the main script
-        // The main script populates currentPageContributors when the page loads
-        const currentContributor = currentPageContributors[0];
-        
-        if (!currentContributor) {
-          console.log('[MXM Interceptor] No contributor data available yet (may still be loading)');
-          debugLog('No contributor found, proceeding with save');
-          return;
-        }
-        
-        console.log('[MXM Interceptor] Current contributor:', {
-          name: currentContributor?.name,
-          hasContributor: !!currentContributor,
-          source: currentPageContributors[0] ? 'cached' : 'fetched'
-        });
-        
-        debugLog('Current contributor for save button:', {
-          name: currentContributor?.name,
-          role: currentContributor?.role,
-          type: currentContributor?.type,
-          date: currentContributor?.date
-        });
-
-        if (!currentContributor || !currentContributor.name) {
-          console.log('[MXM Interceptor] No contributor found, proceeding with save');
-          debugLog('No contributor found, proceeding with save');
-          return;
-        }
-
-        // get contributor's permission
-        const keyExact = currentContributor.name.toLowerCase();
-        const keyInit = normalizeName(currentContributor.name);
-        const matchRows = permissionData[keyExact] || permissionData[keyInit] || [];
-        const permission = matchRows[0]?.permission;
-        debugLog('Contributor permission check:', {
-          originalName: currentContributor.name,
-          keyExact,
-          keyInit,
-          permission,
-          matchType: keyExact in permissionData ? 'exact' : keyInit in permissionData ? 'initials' : 'none',
-          matchRowsFound: matchRows.length
-        });
-
-        // skip popup if user is the contributor
-        const myName = (localStorage.getItem('mxmMyName') || '').trim().toLowerCase();
-        if (myName && currentContributor.name.trim().toLowerCase() === myName) {
-          console.log('[MXM Interceptor] User is the contributor, skipping popup');
-          debugLog('Skipping overwrite popup for user\'s own contribution');
-          // Don't set flag - let it proceed normally
-          return;
-        }
-
-        // if permission is 'ask' or 'no' and user hasn't acknowledged warning
-        // Note: hasAcknowledgedWarning was reset at the start of this handler
-        if ((permission === 'ask' || permission === 'no') && !hasAcknowledgedWarning) {
-          console.log('[MXM Interceptor] Showing overwrite warning popup for:', currentContributor.name);
-          debugLog('Showing overwrite warning popup');
-          e.preventDefault();
-          e.stopPropagation();
-
-          // Debug log the popup creation call
-          debugLog('Creating popup with contributor:', {
-            name: currentContributor.name,
-            permission,
-            keyExact: currentContributor.name.toLowerCase(),
-            keyInit: normalizeName(currentContributor.name)
-          });
-
-          // Disable the save button
-          parentBtn.style.pointerEvents = 'none';
-          parentBtn.style.opacity = '0.5';
-
-          const popup = createOverwritePopup(currentContributor.name, permission);
-          document.body.appendChild(popup);
-
-          // add backdrop
-          const backdrop = document.createElement('div');
-          backdrop.style = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 999999;
-          `;
-          document.body.appendChild(backdrop);
-
-          // handle popup buttons
-                popup.querySelector('#mxm-cancel-overwrite').onclick = () => {
-                  console.log('[MXM Interceptor] Overwrite cancelled');
-                  debugLog('Overwrite cancelled');
-                  debugState.lastAction = 'overwriteCancelled';
-                  debugState.actionCount++;
-                  document.body.removeChild(popup);
-                  document.body.removeChild(backdrop);
-                  // Re-enable the save button
-                  parentBtn.style.pointerEvents = 'auto';
-                  parentBtn.style.opacity = '1';
-                  // Flag will be reset at start of next click handler
-                  debugPerformance('Overwrite cancellation', clickStartTime);
-                };
-            // Mangezi code - automatically submit the overwrite w/o having to click the button again
-            popup.querySelector('#mxm-confirm-overwrite').onclick = () => {
-              console.log('[MXM Interceptor] Overwrite confirmed, proceeding with save');
-              debugLog('Overwrite confirmed and submitting immediately');
-              debugState.lastAction = 'overwriteConfirmed';
-              debugState.actionCount++;
-              // Close popup and backdrop
-              document.body.removeChild(popup);
-              document.body.removeChild(backdrop);
-              // Re-enable button
-              parentBtn.style.pointerEvents = 'auto';
-              parentBtn.style.opacity = '1';
-              // Set flag to prevent popup on the programmatic click
-              hasAcknowledgedWarning = true;
-              // Trigger the original button click automatically
-              setTimeout(() => {
-                // The flag will be reset at the start of the next handler
-                // But this programmatic click should proceed without popup
-                parentBtn.click();
-                // Reset flag after click is processed
-                setTimeout(() => {
-                  hasAcknowledgedWarning = false;
-                }, 200);
-              }, 100); // slight delay to ensure popup cleanup
-              debugPerformance('Immediate overwrite confirmation + submission', clickStartTime);
-            };
-
-          } else {
-            console.log('[MXM Interceptor] No overwrite restrictions, proceeding with save');
-            debugLog('No overwrite restrictions or warning already acknowledged, proceeding with save');
-            // Flag already reset at start of handler, no need to reset here
-            debugPerformance('Save without restrictions', clickStartTime);
-          }
+      }
+      
+      // 1. Check if the clicked element (or its parent) looks like a button
+      const targetBtn = e.target.closest('div[role="button"], button, [tabindex="0"]');
+      if (!targetBtn) return;
+      
+      // 2. Check if the button text is "Send" (in any language)
+      const btnText = (targetBtn.textContent || '').trim();
+      if (!sendButtonTexts.has(btnText)) return;
+      
+      console.log('[MXM Interceptor] Intercepted click on "Send" button:', {
+        text: btnText,
+        isUserClick,
+        hasAcknowledgedWarning
+      });
+      debugLog('Intercepted click on "Send" button:', { text: btnText, isUserClick });
+      debugState.lastAction = 'sendButtonClick';
+      debugState.actionCount++;
+      
+      // 3. Get contributor data (already fetched by main script)
+      const currentContributor = currentPageContributors[0];
+      if (!currentContributor) {
+        console.log('[MXM Interceptor] No contributor data loaded, allowing save');
+        debugLog('No contributor data loaded, allowing save');
+        return;
+      }
+      
+      // 4. Check permissions
+      const keyExact = currentContributor.name.toLowerCase();
+      const keyInit = normalizeName(currentContributor.name);
+      const matchRows = permissionData[keyExact] || permissionData[keyInit] || [];
+      const permission = matchRows[0]?.permission;
+      
+      debugLog('Contributor permission check:', {
+        originalName: currentContributor.name,
+        keyExact,
+        keyInit,
+        permission,
+        matchType: keyExact in permissionData ? 'exact' : keyInit in permissionData ? 'initials' : 'none',
+        matchRowsFound: matchRows.length
       });
       
-      return true; // Successfully intercepted
-    };
-
-    // Function to search for buttons in the DOM
-    const searchForButtons = (source = 'search') => {
-      console.log('[MXM Interceptor] Searching for Send buttons in DOM (source:', source + ')...');
-      debugLog(`Searching for Send buttons in DOM (source: ${source})...`);
-      
-      // Try multiple selectors to find the Send button
-      // Note: CSS classes change between light/dark mode (css-175oi2r vs css-g5y9jx)
-      // So we use more generic selectors that work in both modes
-      const selectors = [
-        '[tabindex="0"] .css-146c3p1[style*="color: var(--mxm-contentPrimaryInverted)"]',
-        '[tabindex="0"] .css-146c3p1[style*="contentPrimaryInverted"]',
-        '.css-175oi2r[tabindex="0"] .css-146c3p1[style*="color: var(--mxm-contentPrimaryInverted)"]',
-        '.css-g5y9jx[tabindex="0"] .css-146c3p1[style*="color: var(--mxm-contentPrimaryInverted)"]',
-        '[tabindex="0"] [style*="color: var(--mxm-contentPrimaryInverted)"]',
-        'button[tabindex="0"]',
-        '[role="button"][tabindex="0"]'
-      ];
-
-      let foundAny = false;
-      for (const selector of selectors) {
-        try {
-          const buttons = document.querySelectorAll(selector);
-          console.log(`[MXM Interceptor] Selector "${selector}" found ${buttons.length} elements`);
-          debugLog(`Selector "${selector}" found ${buttons.length} elements`);
-          
-          for (const btn of buttons) {
-            if (checkAndInterceptButton(btn, `${source}-${selector}`)) {
-              foundAny = true;
-            }
-          }
-        } catch (e) {
-          console.error(`[MXM Interceptor] Selector "${selector}" failed:`, e);
-          debugLog(`Selector "${selector}" failed: ${e.message}`);
-        }
+      // Skip if user is the contributor
+      const myName = (localStorage.getItem('mxmMyName') || '').trim().toLowerCase();
+      if (myName && currentContributor.name.trim().toLowerCase() === myName) {
+        console.log('[MXM Interceptor] User is the contributor, allowing save');
+        debugLog('User is the contributor, allowing save');
+        return;
       }
-
-      // Also try searching by text content - but only in likely button containers
-      // This is much more efficient than searching all elements
-      const likelyContainers = document.querySelectorAll('button, [role="button"], [tabindex="0"]');
-      console.log(`[MXM Interceptor] Searching ${likelyContainers.length} likely button containers for Send button text...`);
-      debugLog(`Searching ${likelyContainers.length} likely button containers for Send button text...`);
       
-      let textMatches = 0;
-      for (const el of likelyContainers) {
-        const text = el.textContent?.trim();
-        if (text && sendButtonTexts.includes(text)) {
-          // Check if this element or its direct child has the text
-          const hasTextDirectly = el.children.length === 0 || 
-            Array.from(el.children).some(child => sendButtonTexts.includes(child.textContent?.trim()));
+      // 5. If warning needed, STOP the click
+      if ((permission === 'ask' || permission === 'no') && !hasAcknowledgedWarning) {
+        console.log('[MXM Interceptor] Blocking save to show warning popup for:', currentContributor.name);
+        debugLog('Blocking save to show warning popup');
+        
+        // STOP everything immediately -  prevents Musixmatch from processing the click
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        
+        // Show the popup
+        const popup = createOverwritePopup(currentContributor.name, permission);
+        document.body.appendChild(popup);
+        
+        // Add backdrop
+        const backdrop = document.createElement('div');
+        backdrop.style = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0,0,0,0.5);
+          z-index: 999999;
+        `;
+        document.body.appendChild(backdrop);
+        
+        // disable the save button  visually
+        targetBtn.style.pointerEvents = 'none';
+        targetBtn.style.opacity = '0.5';
+        
+        // Setup popup handlers
+        const cleanup = () => {
+          if (popup.parentNode) document.body.removeChild(popup);
+          if (backdrop.parentNode) document.body.removeChild(backdrop);
+          targetBtn.style.pointerEvents = 'auto';
+          targetBtn.style.opacity = '1';
+        };
+        
+        popup.querySelector('#mxm-cancel-overwrite').onclick = () => {
+          console.log('[MXM Interceptor] Overwrite cancelled');
+          debugLog('Overwrite cancelled');
+          debugState.lastAction = 'overwriteCancelled';
+          debugState.actionCount++;
+          cleanup();
+          hasAcknowledgedWarning = false;
+          debugPerformance('Overwrite cancellation', clickStartTime);
+        };
+        
+        popup.querySelector('#mxm-confirm-overwrite').onclick = () => {
+          console.log('[MXM Interceptor] Overwrite confirmed, proceeding with save');
+          debugLog('Overwrite confirmed');
+          debugState.lastAction = 'overwriteConfirmed';
+          debugState.actionCount++;
+          cleanup();
+          hasAcknowledgedWarning = true;
           
-          if (hasTextDirectly) {
-            textMatches++;
-            const buttonElement = el.children.length === 0 ? el : 
-              Array.from(el.children).find(child => sendButtonTexts.includes(child.textContent?.trim())) || el;
-            if (checkAndInterceptButton(buttonElement, `${source}-textMatch`)) {
-              foundAny = true;
-            }
-          }
-        }
+          // Re-trigger the click safely
+          //  !!! set the flag so this handler won't block it again
+          setTimeout(() => {
+            targetBtn.click();
+            // Reset flag after a delay next user click will show popup again
+            setTimeout(() => {
+              hasAcknowledgedWarning = false;
+            }, 500);
+          }, 100);
+          debugPerformance('Immediate overwrite confirmation + submission', clickStartTime);
+        };
+      } else {
+        // If we get here, either permission is allowed OR user already confirmed
+        console.log('[MXM Interceptor] Save allowed (permission ok or warning acknowledged)');
+        debugLog('Save allowed (permission ok or warning acknowledged)');
+        hasAcknowledgedWarning = false; // Reset for next time
+        debugPerformance('Save without restrictions', clickStartTime);
       }
-      console.log(`[MXM Interceptor] Found ${textMatches} elements matching Send button text`);
-      debugLog(`Found ${textMatches} elements matching Send button text`);
-
-      return foundAny;
-    };
-
-    // Check for existing buttons immediately
-    console.log('[MXM Interceptor] Checking for existing Send buttons in DOM...');
-    debugLog('Checking for existing Send buttons in DOM...');
-    const foundInitially = searchForButtons('initial');
+    }, true); // <--- 'true' enables Capture Phase (Crucial!)
     
-    // If not found initially, set up periodic checks as fallback
-    if (!foundInitially) {
-      console.log('[MXM Interceptor] Button not found initially, setting up periodic checks...');
-      let periodicCheckCount = 0;
-      const maxPeriodicChecks = 20; // Check for 10 seconds (20 * 500ms)
-      const periodicCheck = setInterval(() => {
-        periodicCheckCount++;
-        console.log(`[MXM Interceptor] Periodic check ${periodicCheckCount}/${maxPeriodicChecks}...`);
-        if (searchForButtons(`periodic-${periodicCheckCount}`)) {
-          console.log('[MXM Interceptor] Button found during periodic check, stopping periodic checks');
-          clearInterval(periodicCheck);
-        } else if (periodicCheckCount >= maxPeriodicChecks) {
-          console.log('[MXM Interceptor] Periodic checks completed, button not found');
-          clearInterval(periodicCheck);
-        }
-      }, 500);
-    }
-
-    // Set up MutationObserver to catch buttons added later
-    const observer = new MutationObserver(mutations => {
-      let foundNewButton = false;
-      for (const m of mutations) {
-        for (const node of m.addedNodes) {
-          if (node.nodeType !== Node.ELEMENT_NODE) continue;
-          
-          // Check if the added node itself is a button
-          if (checkAndInterceptButton(node, 'mutation-node')) {
-            foundNewButton = true;
-            continue;
-          }
-          
-          // Check if the added node contains a button
-          if (node.querySelector) {
-            // Try generic selector that works in both light and dark mode
-            const sendButton = node.querySelector('[tabindex="0"] .css-146c3p1[style*="color: var(--mxm-contentPrimaryInverted)"]');
-            if (checkAndInterceptButton(sendButton, 'mutation-query')) {
-              foundNewButton = true;
-              continue;
-            }
-            
-            // Try specific selectors for both modes
-            const sendButtonDark = node.querySelector('.css-175oi2r[tabindex="0"] .css-146c3p1[style*="color: var(--mxm-contentPrimaryInverted)"]');
-            if (checkAndInterceptButton(sendButtonDark, 'mutation-query-dark')) {
-              foundNewButton = true;
-              continue;
-            }
-            
-            const sendButtonLight = node.querySelector('.css-g5y9jx[tabindex="0"] .css-146c3p1[style*="color: var(--mxm-contentPrimaryInverted)"]');
-            if (checkAndInterceptButton(sendButtonLight, 'mutation-query-light')) {
-              foundNewButton = true;
-              continue;
-            }
-            
-            // Try alternative selectors
-            const altButtons = node.querySelectorAll('.css-146c3p1, [style*="color: var(--mxm-contentPrimaryInverted)"]');
-            for (const btn of altButtons) {
-              if (checkAndInterceptButton(btn, 'mutation-alt')) {
-                foundNewButton = true;
-                break;
-              }
-            }
-          }
-        }
-      }
-      
-      if (foundNewButton) {
-        console.log('[MXM Interceptor] New Send button detected and intercepted via MutationObserver');
-        debugLog('New Send button detected and intercepted via MutationObserver');
-      }
-    });
-
-    observer.observe(document.body, { childList: true, subtree: true });
     isObserverActive = true;
-    console.log('[MXM Interceptor] MutationObserver started, watching for new Send buttons');
-    debugLog('MutationObserver started, watching for new Send buttons');
+    console.log('[MXM Interceptor] Capture phase listener active - no CSS selectors needed!');
+    debugLog('Capture phase listener active');
     debugPerformance('Save button interceptor setup', startTime);
   };
 
