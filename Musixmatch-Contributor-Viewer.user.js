@@ -2,8 +2,8 @@
 // @name         Musixmatch-Contributor-Viewer
 // @author       Bryce
 // @namespace    http://tampermonkey.net/
-// @version      5.3.1
-// @description  Version 5.3.1 adds a troubleshooting step when contributor data fails to load. Thanks for using the script! Quick reminder to reach out to me on Slack if you have any suggestions or issues.
+// @version      5.4.0
+// @description  VERSION 5.4.0: a brand-new experience! Contributor data now loads within the assistant interface, making the script seamlessly integrated into the Musixmatch studio.
 // @icon         https://raw.githubusercontent.com/bryyce19/mxm-contribs/refs/heads/main/img/finallogosquare.png
 // @match        https://curators.musixmatch.com/*
 // @match        https://curators-beta.musixmatch.com/*
@@ -1145,7 +1145,7 @@
   });
 
   // Add new function to fetch contributor data
-  const fetchContributorData = (lyricsUrl) => {
+  let fetchContributorData = (lyricsUrl) => {
     const startTime = Date.now();
     debugLog('Fetching contributor data:', {
       url: lyricsUrl,
@@ -1821,6 +1821,7 @@
 
   // add save button interceptor
   let isObserverActive = false;
+  
   const interceptSaveButton = () => {
     const startTime = Date.now();
     if (isObserverActive) {
@@ -1828,180 +1829,227 @@
       return;
     }
 
+    console.log('[MXM Interceptor] Starting save button interceptor...');
     debugLog('Starting save button interceptor...');
     debugState.lastAction = 'interceptSaveButton';
     debugState.actionCount++;
   
-    const observer = new MutationObserver(mutations => {
-      for (const m of mutations) {
-        for (const node of m.addedNodes) {
-          // Look specifically for the Send button
-          const sendButton = node.querySelector?.('.css-175oi2r[tabindex="0"] .css-146c3p1[style*="color: var(--mxm-contentPrimaryInverted)"]');
-          if (sendButton && [
-            'إرسال',      // Arabic
-            'পাঠাও',      // Assamese
-            'পাঠান',      // Bengali
-            'Ipadala',    // Bikol
-            'Enviar',     // Brazilian Portuguese
-            'Изпрати',    // Bulgarian
-            'Ipadala',    // Cebuano
-            '发送',       // Chinese
-            'Pošalji',    // Croatian
-            'Odeslat',    // Czech
-            'Send',       // Danish
-            'Versturen',  // Dutch
-            'Send',       // English
-            'Lähetä',     // Finnish
-            'Envoyer',    // French
-            'Senden',     // German
-            'Στείλε',     // Greek
-            'Voye',       // Haitian Creole
-            'भेजें',      // Haryanvi
-            'Aika',       // Hausa
-            'שלח',        // Hebrew
-            'भेजें',      // Hindi
-            'Küldés',     // Hungarian
-            'Ziga',       // Igbo
-            'Kirim',      // Indonesian
-            'Invia',      // Italian
-            '送信',       // Japanese
-            'Kirim',      // Javanese
-            '보내기',     // Korean
-            'Tinda',      // Lingála
-            'Hantar',     // Malay
-            'അയയ്ക്കുക',  // Malayalam
-            'पाठवा',      // Marathi
-            'पठाउनुहोस्', // Nepali
-            'Sende',      // Norwegian
-            'ପଠାନ୍ତୁ',    // Odia
-            'ارسال',      // Persian
-            'ਭੇਜੋ',       // Punjabi
-            'Wyślij',     // Polish
-            'Enviar',     // Portuguese
-            'Trimite',    // Romanian
-            'Отправить',  // Russian
-            'प्रेषय',     // Sanskrit
-            'Tumira',     // Shona
-            'Odoslať',    // Slovak
-            'Enviar',     // Spanish
-            'Kirim',      // Sundanese
-            'Skicka',     // Swedish
-            'Ipadala',    // Tagalog
-            'அனுப்பு',    // Tamil
-            'పంపండి',     // Telugu
-            'ส่ง',        // Thai
-            'Rhumela',    // Tsonga
-            'Gönder',     // Turkish
-            'Надіслати',  // Ukrainian
-            'بھیجیں',     // Urdu
-            'Rhumela',    // Venda
-            'Gửi',        // Vietnamese
-            'Ránṣẹ́',     // Yoruba
-            'Thumela',    // Xhosa
-            'Thumela'     // Zulu
-          ].includes(sendButton.textContent?.trim())) {
-            debugLog('Found Send button:', {
-              text: sendButton.textContent,
-              parent: sendButton.closest('.css-175oi2r[tabindex="0"]')?.className,
-              timestamp: new Date().toISOString()
-            });
+    // List of Send button texts in various languages
+    const sendButtonTexts = [
+      'إرسال',      // Arabic
+      'পাঠাও',      // Assamese
+      'পাঠান',      // Bengali
+      'Ipadala',    // Bikol
+      'Enviar',     // Brazilian Portuguese
+      'Изпрати',    // Bulgarian
+      'Ipadala',    // Cebuano
+      '发送',       // Chinese
+      'Pošalji',    // Croatian
+      'Odeslat',    // Czech
+      'Send',       // Danish
+      'Versturen',  // Dutch
+      'Send',       // English
+      'Lähetä',     // Finnish
+      'Envoyer',    // French
+      'Senden',     // German
+      'Στείλε',     // Greek
+      'Voye',       // Haitian Creole
+      'भेजें',      // Haryanvi
+      'Aika',       // Hausa
+      'שלח',        // Hebrew
+      'भेजें',      // Hindi
+      'Küldés',     // Hungarian
+      'Ziga',       // Igbo
+      'Kirim',      // Indonesian
+      'Invia',      // Italian
+      '送信',       // Japanese
+      'Kirim',      // Javanese
+      '보내기',     // Korean
+      'Tinda',      // Lingála
+      'Hantar',     // Malay
+      'അയയ്ക്കുക',  // Malayalam
+      'पाठवा',      // Marathi
+      'पठाउनुहोस्', // Nepali
+      'Sende',      // Norwegian
+      'ପଠାନ୍ତୁ',    // Odia
+      'ارسال',      // Persian
+      'ਭੇਜੋ',       // Punjabi
+      'Wyślij',     // Polish
+      'Enviar',     // Portuguese
+      'Trimite',    // Romanian
+      'Отправить',  // Russian
+      'प्रेषय',     // Sanskrit
+      'Tumira',     // Shona
+      'Odoslať',    // Slovak
+      'Enviar',     // Spanish
+      'Kirim',      // Sundanese
+      'Skicka',     // Swedish
+      'Ipadala',    // Tagalog
+      'அனுப்பு',    // Tamil
+      'పంపండి',     // Telugu
+      'ส่ง',        // Thai
+      'Rhumela',    // Tsonga
+      'Gönder',     // Turkish
+      'Надіслати',  // Ukrainian
+      'بھیجیں',     // Urdu
+      'Rhumela',    // Venda
+      'Gửi',        // Vietnamese
+      'Ránṣẹ́',     // Yoruba
+      'Thumela',    // Xhosa
+      'Thumela'     // Zulu
+    ];
 
-            // get the parent button element
-            const parentBtn = sendButton.closest('.css-175oi2r[tabindex="0"]');
-            if (!parentBtn) {
-              debugLog('Could not find parent button element');
-              continue;
-            }
+    // Function to check and intercept a button element
+    const checkAndInterceptButton = (sendButton, source = 'unknown') => {
+      if (!sendButton) return false;
+      
+      const buttonText = sendButton.textContent?.trim();
+      if (!sendButtonTexts.includes(buttonText)) {
+        debugLog(`Button text "${buttonText}" not in send button list (source: ${source})`);
+        return false;
+      }
 
-            // check if we've already added the listener
-            if (parentBtn.hasAttribute('data-mxm-intercepted')) {
-              debugLog('Button already intercepted, skipping...');
-              continue;
-            }
+      console.log('[MXM Interceptor] Found Send button:', {
+        text: buttonText,
+        source: source,
+        timestamp: new Date().toISOString()
+      });
+      debugLog('Found Send button:', {
+        text: buttonText,
+        source: source,
+        parent: sendButton.closest('[tabindex="0"]')?.className,
+        timestamp: new Date().toISOString()
+      });
 
-            // mark as intercepted
-            parentBtn.setAttribute('data-mxm-intercepted', 'true');
-            debugLog('Adding click interceptor to Send button');
+      // get the parent button element - try multiple selectors
+      // Works in both light mode (css-g5y9jx) and dark mode (css-175oi2r)
+      let parentBtn = sendButton.closest('[tabindex="0"]');
+      if (!parentBtn) {
+        // Try alternative: look for button parent
+        parentBtn = sendButton.closest('button') || sendButton.closest('[role="button"]') || sendButton.parentElement;
+        debugLog('Using alternative parent selector for button');
+      }
+      
+      if (!parentBtn) {
+        debugLog('Could not find parent button element');
+        return false;
+      }
 
-            // add our interceptor
-            parentBtn.addEventListener('click', async (e) => {
-              const clickStartTime = Date.now();
-              debugLog('Send button clicked');
-              debugState.lastAction = 'sendButtonClick';
-              debugState.actionCount++;
+      // check if we've already added the listener
+      if (parentBtn.hasAttribute('data-mxm-intercepted')) {
+        debugLog('Button already intercepted, skipping...');
+        return true; // Already handled
+      }
 
-              // get current contributor
-              const currentContributor = currentPageContributors[0];
-              debugLog('Current contributor for save button:', {
-                name: currentContributor?.name,
-                role: currentContributor?.role,
-                type: currentContributor?.type,
-                date: currentContributor?.date
-              });
+      // mark as intercepted
+      parentBtn.setAttribute('data-mxm-intercepted', 'true');
+      console.log('[MXM Interceptor] Adding click interceptor to Send button');
+      debugLog('Adding click interceptor to Send button');
 
-              if (!currentContributor) {
-                debugLog('No contributor found, proceeding with save');
-                return;
-              }
+      // add our interceptor - use capture phase to catch early
+      parentBtn.addEventListener('click', async (e) => {
+        const clickStartTime = Date.now();
+        
+        // CRITICAL: Reset flag at the START of each click handler
+        // This ensures the popup shows every time until user explicitly confirms
+        hasAcknowledgedWarning = false;
+        
+        console.log('[MXM Interceptor] Send button clicked - flag reset');
+        debugLog('Send button clicked');
+        debugState.lastAction = 'sendButtonClick';
+        debugState.actionCount++;
 
-              // get contributor's permission
-              const keyExact = currentContributor.name.toLowerCase();
-              const keyInit = normalizeName(currentContributor.name);
-              const matchRows = permissionData[keyExact] || permissionData[keyInit] || [];
-              const permission = matchRows[0]?.permission;
-              debugLog('Contributor permission check:', {
-                originalName: currentContributor.name,
-                keyExact,
-                keyInit,
-                permission,
-                matchType: keyExact in permissionData ? 'exact' : keyInit in permissionData ? 'initials' : 'none',
-                matchRowsFound: matchRows.length
-              });
+        // Use contributor data that's already been fetched by the main script
+        // The main script populates currentPageContributors when the page loads
+        const currentContributor = currentPageContributors[0];
+        
+        if (!currentContributor) {
+          console.log('[MXM Interceptor] No contributor data available yet (may still be loading)');
+          debugLog('No contributor found, proceeding with save');
+          return;
+        }
+        
+        console.log('[MXM Interceptor] Current contributor:', {
+          name: currentContributor?.name,
+          hasContributor: !!currentContributor,
+          source: currentPageContributors[0] ? 'cached' : 'fetched'
+        });
+        
+        debugLog('Current contributor for save button:', {
+          name: currentContributor?.name,
+          role: currentContributor?.role,
+          type: currentContributor?.type,
+          date: currentContributor?.date
+        });
 
-              // skip popup if user is the contributor
-              const myName = (localStorage.getItem('mxmMyName') || '').trim().toLowerCase();
-              if (myName && currentContributor.name.trim().toLowerCase() === myName) {
-                debugLog('Skipping overwrite popup for user\'s own contribution');
-                hasAcknowledgedWarning = true;
-                return;
-              }
+        if (!currentContributor || !currentContributor.name) {
+          console.log('[MXM Interceptor] No contributor found, proceeding with save');
+          debugLog('No contributor found, proceeding with save');
+          return;
+        }
 
-              // if permission is 'ask' or 'no' and user hasn't acknowledged warning
-              if ((permission === 'ask' || permission === 'no') && !hasAcknowledgedWarning) {
-                debugLog('Showing overwrite warning popup');
-                e.preventDefault();
-                e.stopPropagation();
+        // get contributor's permission
+        const keyExact = currentContributor.name.toLowerCase();
+        const keyInit = normalizeName(currentContributor.name);
+        const matchRows = permissionData[keyExact] || permissionData[keyInit] || [];
+        const permission = matchRows[0]?.permission;
+        debugLog('Contributor permission check:', {
+          originalName: currentContributor.name,
+          keyExact,
+          keyInit,
+          permission,
+          matchType: keyExact in permissionData ? 'exact' : keyInit in permissionData ? 'initials' : 'none',
+          matchRowsFound: matchRows.length
+        });
 
-                // Debug log the popup creation call
-                debugLog('Creating popup with contributor:', {
-                  name: currentContributor.name,
-                  permission,
-                  keyExact: currentContributor.name.toLowerCase(),
-                  keyInit: normalizeName(currentContributor.name)
-                });
+        // skip popup if user is the contributor
+        const myName = (localStorage.getItem('mxmMyName') || '').trim().toLowerCase();
+        if (myName && currentContributor.name.trim().toLowerCase() === myName) {
+          console.log('[MXM Interceptor] User is the contributor, skipping popup');
+          debugLog('Skipping overwrite popup for user\'s own contribution');
+          // Don't set flag - let it proceed normally
+          return;
+        }
 
-                // Disable the save button
-                parentBtn.style.pointerEvents = 'none';
-                parentBtn.style.opacity = '0.5';
+        // if permission is 'ask' or 'no' and user hasn't acknowledged warning
+        // Note: hasAcknowledgedWarning was reset at the start of this handler
+        if ((permission === 'ask' || permission === 'no') && !hasAcknowledgedWarning) {
+          console.log('[MXM Interceptor] Showing overwrite warning popup for:', currentContributor.name);
+          debugLog('Showing overwrite warning popup');
+          e.preventDefault();
+          e.stopPropagation();
 
-                const popup = createOverwritePopup(currentContributor.name, permission);
-                document.body.appendChild(popup);
+          // Debug log the popup creation call
+          debugLog('Creating popup with contributor:', {
+            name: currentContributor.name,
+            permission,
+            keyExact: currentContributor.name.toLowerCase(),
+            keyInit: normalizeName(currentContributor.name)
+          });
 
-                // add backdrop
-                const backdrop = document.createElement('div');
-                backdrop.style = `
-                  position: fixed;
-                  top: 0;
-                  left: 0;
-                  right: 0;
-                  bottom: 0;
-                  background: rgba(0,0,0,0.5);
-                  z-index: 999999;
-                `;
-                document.body.appendChild(backdrop);
+          // Disable the save button
+          parentBtn.style.pointerEvents = 'none';
+          parentBtn.style.opacity = '0.5';
 
-                // handle popup buttons
+          const popup = createOverwritePopup(currentContributor.name, permission);
+          document.body.appendChild(popup);
+
+          // add backdrop
+          const backdrop = document.createElement('div');
+          backdrop.style = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999999;
+          `;
+          document.body.appendChild(backdrop);
+
+          // handle popup buttons
                 popup.querySelector('#mxm-cancel-overwrite').onclick = () => {
+                  console.log('[MXM Interceptor] Overwrite cancelled');
                   debugLog('Overwrite cancelled');
                   debugState.lastAction = 'overwriteCancelled';
                   debugState.actionCount++;
@@ -2010,53 +2058,234 @@
                   // Re-enable the save button
                   parentBtn.style.pointerEvents = 'auto';
                   parentBtn.style.opacity = '1';
-                  hasAcknowledgedWarning = false; // Reset flag on cancel
+                  // Flag will be reset at start of next click handler
                   debugPerformance('Overwrite cancellation', clickStartTime);
                 };
+            // Mangezi code - automatically submit the overwrite w/o having to click the button again
+            popup.querySelector('#mxm-confirm-overwrite').onclick = () => {
+              console.log('[MXM Interceptor] Overwrite confirmed, proceeding with save');
+              debugLog('Overwrite confirmed and submitting immediately');
+              debugState.lastAction = 'overwriteConfirmed';
+              debugState.actionCount++;
+              // Close popup and backdrop
+              document.body.removeChild(popup);
+              document.body.removeChild(backdrop);
+              // Re-enable button
+              parentBtn.style.pointerEvents = 'auto';
+              parentBtn.style.opacity = '1';
+              // Set flag to prevent popup on the programmatic click
+              hasAcknowledgedWarning = true;
+              // Trigger the original button click automatically
+              setTimeout(() => {
+                // The flag will be reset at the start of the next handler
+                // But this programmatic click should proceed without popup
+                parentBtn.click();
+                // Reset flag after click is processed
+                setTimeout(() => {
+                  hasAcknowledgedWarning = false;
+                }, 200);
+              }, 100); // slight delay to ensure popup cleanup
+              debugPerformance('Immediate overwrite confirmation + submission', clickStartTime);
+            };
 
-                popup.querySelector('#mxm-confirm-overwrite').onclick = () => {
-                  debugLog('Overwrite confirmed');
-                  debugState.lastAction = 'overwriteConfirmed';
-                  debugState.actionCount++;
-                  document.body.removeChild(popup);
-                  document.body.removeChild(backdrop);
-                  // Re-enable the save button
-                  parentBtn.style.pointerEvents = 'auto';
-                  parentBtn.style.opacity = '1';
-                  hasAcknowledgedWarning = true; // Set flag when user confirms
-                  debugPerformance('Overwrite confirmation', clickStartTime);
-                };
-              } else {
-                debugLog('No overwrite restrictions or warning already acknowledged, proceeding with save');
-                hasAcknowledgedWarning = false; // Reset flag after save
-                debugPerformance('Save without restrictions', clickStartTime);
-              }
-            });
+          } else {
+            console.log('[MXM Interceptor] No overwrite restrictions, proceeding with save');
+            debugLog('No overwrite restrictions or warning already acknowledged, proceeding with save');
+            // Flag already reset at start of handler, no need to reset here
+            debugPerformance('Save without restrictions', clickStartTime);
+          }
+      });
+      
+      return true; // Successfully intercepted
+    };
+
+    // Function to search for buttons in the DOM
+    const searchForButtons = (source = 'search') => {
+      console.log('[MXM Interceptor] Searching for Send buttons in DOM (source:', source + ')...');
+      debugLog(`Searching for Send buttons in DOM (source: ${source})...`);
+      
+      // Try multiple selectors to find the Send button
+      // Note: CSS classes change between light/dark mode (css-175oi2r vs css-g5y9jx)
+      // So we use more generic selectors that work in both modes
+      const selectors = [
+        '[tabindex="0"] .css-146c3p1[style*="color: var(--mxm-contentPrimaryInverted)"]',
+        '[tabindex="0"] .css-146c3p1[style*="contentPrimaryInverted"]',
+        '.css-175oi2r[tabindex="0"] .css-146c3p1[style*="color: var(--mxm-contentPrimaryInverted)"]',
+        '.css-g5y9jx[tabindex="0"] .css-146c3p1[style*="color: var(--mxm-contentPrimaryInverted)"]',
+        '[tabindex="0"] [style*="color: var(--mxm-contentPrimaryInverted)"]',
+        'button[tabindex="0"]',
+        '[role="button"][tabindex="0"]'
+      ];
+
+      let foundAny = false;
+      for (const selector of selectors) {
+        try {
+          const buttons = document.querySelectorAll(selector);
+          console.log(`[MXM Interceptor] Selector "${selector}" found ${buttons.length} elements`);
+          debugLog(`Selector "${selector}" found ${buttons.length} elements`);
+          
+          for (const btn of buttons) {
+            if (checkAndInterceptButton(btn, `${source}-${selector}`)) {
+              foundAny = true;
+            }
+          }
+        } catch (e) {
+          console.error(`[MXM Interceptor] Selector "${selector}" failed:`, e);
+          debugLog(`Selector "${selector}" failed: ${e.message}`);
+        }
+      }
+
+      // Also try searching by text content - but only in likely button containers
+      // This is much more efficient than searching all elements
+      const likelyContainers = document.querySelectorAll('button, [role="button"], [tabindex="0"]');
+      console.log(`[MXM Interceptor] Searching ${likelyContainers.length} likely button containers for Send button text...`);
+      debugLog(`Searching ${likelyContainers.length} likely button containers for Send button text...`);
+      
+      let textMatches = 0;
+      for (const el of likelyContainers) {
+        const text = el.textContent?.trim();
+        if (text && sendButtonTexts.includes(text)) {
+          // Check if this element or its direct child has the text
+          const hasTextDirectly = el.children.length === 0 || 
+            Array.from(el.children).some(child => sendButtonTexts.includes(child.textContent?.trim()));
+          
+          if (hasTextDirectly) {
+            textMatches++;
+            const buttonElement = el.children.length === 0 ? el : 
+              Array.from(el.children).find(child => sendButtonTexts.includes(child.textContent?.trim())) || el;
+            if (checkAndInterceptButton(buttonElement, `${source}-textMatch`)) {
+              foundAny = true;
+            }
           }
         }
+      }
+      console.log(`[MXM Interceptor] Found ${textMatches} elements matching Send button text`);
+      debugLog(`Found ${textMatches} elements matching Send button text`);
+
+      return foundAny;
+    };
+
+    // Check for existing buttons immediately
+    console.log('[MXM Interceptor] Checking for existing Send buttons in DOM...');
+    debugLog('Checking for existing Send buttons in DOM...');
+    const foundInitially = searchForButtons('initial');
+    
+    // If not found initially, set up periodic checks as fallback
+    if (!foundInitially) {
+      console.log('[MXM Interceptor] Button not found initially, setting up periodic checks...');
+      let periodicCheckCount = 0;
+      const maxPeriodicChecks = 20; // Check for 10 seconds (20 * 500ms)
+      const periodicCheck = setInterval(() => {
+        periodicCheckCount++;
+        console.log(`[MXM Interceptor] Periodic check ${periodicCheckCount}/${maxPeriodicChecks}...`);
+        if (searchForButtons(`periodic-${periodicCheckCount}`)) {
+          console.log('[MXM Interceptor] Button found during periodic check, stopping periodic checks');
+          clearInterval(periodicCheck);
+        } else if (periodicCheckCount >= maxPeriodicChecks) {
+          console.log('[MXM Interceptor] Periodic checks completed, button not found');
+          clearInterval(periodicCheck);
+        }
+      }, 500);
+    }
+
+    // Set up MutationObserver to catch buttons added later
+    const observer = new MutationObserver(mutations => {
+      let foundNewButton = false;
+      for (const m of mutations) {
+        for (const node of m.addedNodes) {
+          if (node.nodeType !== Node.ELEMENT_NODE) continue;
+          
+          // Check if the added node itself is a button
+          if (checkAndInterceptButton(node, 'mutation-node')) {
+            foundNewButton = true;
+            continue;
+          }
+          
+          // Check if the added node contains a button
+          if (node.querySelector) {
+            // Try generic selector that works in both light and dark mode
+            const sendButton = node.querySelector('[tabindex="0"] .css-146c3p1[style*="color: var(--mxm-contentPrimaryInverted)"]');
+            if (checkAndInterceptButton(sendButton, 'mutation-query')) {
+              foundNewButton = true;
+              continue;
+            }
+            
+            // Try specific selectors for both modes
+            const sendButtonDark = node.querySelector('.css-175oi2r[tabindex="0"] .css-146c3p1[style*="color: var(--mxm-contentPrimaryInverted)"]');
+            if (checkAndInterceptButton(sendButtonDark, 'mutation-query-dark')) {
+              foundNewButton = true;
+              continue;
+            }
+            
+            const sendButtonLight = node.querySelector('.css-g5y9jx[tabindex="0"] .css-146c3p1[style*="color: var(--mxm-contentPrimaryInverted)"]');
+            if (checkAndInterceptButton(sendButtonLight, 'mutation-query-light')) {
+              foundNewButton = true;
+              continue;
+            }
+            
+            // Try alternative selectors
+            const altButtons = node.querySelectorAll('.css-146c3p1, [style*="color: var(--mxm-contentPrimaryInverted)"]');
+            for (const btn of altButtons) {
+              if (checkAndInterceptButton(btn, 'mutation-alt')) {
+                foundNewButton = true;
+                break;
+              }
+            }
+          }
+        }
+      }
+      
+      if (foundNewButton) {
+        console.log('[MXM Interceptor] New Send button detected and intercepted via MutationObserver');
+        debugLog('New Send button detected and intercepted via MutationObserver');
       }
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
     isObserverActive = true;
+    console.log('[MXM Interceptor] MutationObserver started, watching for new Send buttons');
+    debugLog('MutationObserver started, watching for new Send buttons');
     debugPerformance('Save button interceptor setup', startTime);
   };
 
   // wait for page to be ready before starting observer
   const waitForPageReady = () => {
     return new Promise((resolve) => {
+      console.log('[MXM Interceptor] waitForPageReady: Starting page readiness check');
+      console.log('[MXM Interceptor] waitForPageReady: Current pathname:', location.pathname);
+      debugLog('waitForPageReady: Starting page readiness check');
+      debugLog('waitForPageReady: Current pathname:', location.pathname);
+      
       // check if we're on a tool page
       if (!location.pathname.startsWith('/tool')) {
+        console.log('[MXM Interceptor] Not on a tool page, skipping button observer');
         debugLog('Not on a tool page, skipping button observer');
         resolve();
         return;
       }
 
+      console.log('[MXM Interceptor] On tool page, checking for page readiness...');
+      debugLog('On tool page, checking for page readiness...');
+      let attempts = 0;
+      const maxAttempts = 60; // 30 seconds max wait
+      
       // check for loading indicators
       const checkLoading = () => {
+        attempts++;
         const loadingIndicators = document.querySelectorAll('.css-175oi2r[style*="opacity: 0"]');
-        if (loadingIndicators.length === 0) {
-          debugLog('Page appears to be loaded');
+        if (attempts % 10 === 0 || attempts === 1) {
+          console.log(`[MXM Interceptor] Page readiness check attempt ${attempts}/${maxAttempts}: Found ${loadingIndicators.length} loading indicators`);
+        }
+        debugLog(`Page readiness check attempt ${attempts}/${maxAttempts}: Found ${loadingIndicators.length} loading indicators`);
+        
+        if (loadingIndicators.length === 0 || attempts >= maxAttempts) {
+          if (attempts >= maxAttempts) {
+            console.log('[MXM Interceptor] Page readiness check timed out, proceeding anyway');
+            debugLog('Page readiness check timed out, proceeding anyway');
+          } else {
+            console.log('[MXM Interceptor] Page appears to be loaded');
+            debugLog('Page appears to be loaded');
+          }
           resolve();
           return;
         }
@@ -2070,9 +2299,423 @@
   };
 
   // start intercepting save button after page is ready
+  console.log('[MXM Interceptor] Setting up save button interceptor initialization...');
+  debugLog('Setting up save button interceptor initialization...');
+  
+  // Always start the interceptor, but also wait for page ready for optimal timing
+  // This ensures it works even if waitForPageReady fails
+  const startInterceptor = () => {
+    try {
+      console.log('[MXM Interceptor] Starting interceptor...');
+      interceptSaveButton();
+    } catch (error) {
+      console.error('[MXM Interceptor] Error starting interceptor:', error);
+      // Retry after a delay
+      setTimeout(() => {
+        console.log('[MXM Interceptor] Retrying interceptor start...');
+        try {
+          interceptSaveButton();
+        } catch (retryError) {
+          console.error('[MXM Interceptor] Retry failed:', retryError);
+        }
+      }, 2000);
+    }
+  };
+  
+  // Start immediately (for pages that are already loaded)
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    console.log('[MXM Interceptor] Document already ready, starting interceptor immediately...');
+    startInterceptor();
+  }
+  
+  // Also wait for page ready for optimal timing
   waitForPageReady().then(() => {
-    interceptSaveButton();
-  })
+    console.log('[MXM Interceptor] Page ready, ensuring interceptor is active...');
+    debugLog('Page ready, calling interceptSaveButton...');
+    startInterceptor();
+  }).catch((error) => {
+    console.error('[MXM Interceptor] Error in waitForPageReady:', error);
+    debugLog('Error in waitForPageReady:', error);
+    // Try anyway after a short delay
+    setTimeout(() => {
+      console.log('[MXM Interceptor] Attempting to start interceptor despite error...');
+      debugLog('Attempting to start interceptor despite error...');
+      startInterceptor();
+    }, 1000);
+  });
+
+  // Function to create and inject the Contributor Data card into the assistant menu
+  const createContributorDataCard = () => {
+    let retryCount = 0;
+    const maxRetries = 30; // Try for up to 30 seconds
+    
+    // Wait for the assistant menu to be available
+    const checkForAssistantMenu = () => {
+      if (retryCount >= maxRetries) {
+        debugLog('Gave up trying to find assistant menu after ' + maxRetries + ' attempts');
+        return;
+      }
+      
+      retryCount++;
+      
+      // Only try on tool pages where the assistant menu exists
+      if (!location.pathname.startsWith('/tool')) {
+        debugLog('Not on a tool page, skipping contributor data card');
+        return;
+      }
+      
+      // Find assistant menu using r-* classes (css-* classes are dynamic)
+      const assistantMenu = document.querySelector('[class*="r-e6wx2c"][class*="r-24i33s"]');
+      
+      if (!assistantMenu) {
+        if (retryCount % 5 === 0) {
+          debugLog('Still looking for assistant menu (attempt ' + retryCount + '/' + maxRetries + ')');
+        }
+        setTimeout(checkForAssistantMenu, 1000);
+        return;
+      }
+      
+      debugLog('Found assistant menu on attempt ' + retryCount);
+
+      // Check if we've already added the card
+      if (assistantMenu.querySelector('.mxm-contributor-data-card') || 
+          document.querySelector('.mxm-contributor-data-card')) {
+        debugLog('Contributor Data card already exists, skipping');
+        return;
+      }
+
+      // Get the current contributor data
+      const currentContributor = currentPageContributors[0];
+      
+      // Get permission data for the current contributor
+      let matchRows = [];
+      let firstPerm = null;
+      if (currentContributor) {
+        const keyExact = currentContributor.name.toLowerCase();
+        const keyInit = normalizeName(currentContributor.name);
+        matchRows = permissionData[keyExact] || permissionData[keyInit] || [];
+        firstPerm = matchRows[0]?.permission;
+      }
+
+      // Group entries by language (like the popup does)
+      const languageGroups = {};
+      if (matchRows.length > 0) {
+        matchRows.forEach(row => {
+          if (row.language) {
+            if (!languageGroups[row.language]) {
+              languageGroups[row.language] = [];
+            }
+            languageGroups[row.language].push(row);
+          }
+        });
+      }
+
+      // polished card that matches Musixmatch assistant card styling
+      // The r-* classes provide: background, border, border-radius, padding, box-shadow
+      const cardHTML = `
+        <div class="r-1ifxtd0 mxm-contributor-data-card">
+          <div class="r-1otgn73 r-13awgt0" style="cursor: default;">
+            <div class="r-za8utv r-1867qdf r-3pj75a r-95jzfe r-1j8onyl r-1kribmz r-d045u9" style="padding-bottom: 16px; border: 2px solid var(--mxm-backgroundSecondary);">
+              <!-- Header - Only this uses Musixmatch font -->
+              <div class="r-18u37iz r-1ifxtd0">
+                <div class="r-13awgt0 r-18u37iz r-1wtj0ep">
+                  <div dir="auto" class="css-146c3p1 r-fdjqy7 r-1grxjyw r-adyw6z r-135wba7" style="color: var(--mxm-contentPrimary); font-weight: 600; font-size: 20px; font-family: gordita-bold, sans-serif; display: flex; align-items: center; gap: 8px;"><i class="fas fa-users" style="color: #FC542E; font-size: 20px;"></i><span>Latest Contributor</span></div>
+                </div>
+              </div>
+              
+              <!-- Content Area -->
+              <div class="r-13awgt0 r-1ifxtd0">
+                ${currentContributor ? `
+                  <!-- Contributor Info -->
+                  <div style="padding-top: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--mxm-backgroundTertiary);">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+                      ${(() => {
+                        const roleKey = currentContributor.role.toLowerCase();
+                        const iconSrc = roleIcons[roleKey] || emojiFallback[roleKey] || roleIcons.fallback;
+                        const iconHTML = iconSrc.startsWith('http') ? `<img style="width: 18px; height: 18px; border-radius: 4px;" src="${iconSrc}" draggable="false" oncontextmenu="return false">` : `<span style="font-size: 18px;">${iconSrc}</span>`;
+                        return iconHTML;
+                      })()}
+                      <div style="
+                        color: var(--mxm-contentPrimary);
+                        font-weight: 500;
+                        font-size: 15px;
+                        font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+                      ">${currentContributor.name}</div>
+                    </div>
+                    <div style="
+                      color: var(--mxm-contentTertiary);
+                      font-size: 13px;
+                      margin-left: 26px;
+                      font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+                    ">${currentContributor.role}</div>
+                  </div>
+
+                  <!-- Languages - Show all languages with permissions like the popup -->
+                  ${Object.keys(languageGroups).length > 0 ? `
+                    ${Object.entries(languageGroups).map(([language, entries], index, array) => {
+                      const firstEntry = entries[0];
+                      const langPermission = firstEntry.permission;
+                      const notes = entries.map(entry => entry.note).filter(Boolean);
+                      const uniqueNotes = [...new Set(notes)];
+                      
+                      return `
+                        <div style="
+                          padding-top: ${index === 0 ? '16px' : '16px'};
+                          padding-bottom: ${index === array.length - 1 ? '0' : '16px'};
+                          border-bottom: ${index === array.length - 1 ? 'none' : '1px solid var(--mxm-backgroundTertiary)'};
+                        ">
+                          <!-- Language Name -->
+                          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+                            <div style="color: var(--mxm-contentSecondary); font-size: 13px;">Language:</div>
+                            <div style="
+                              color: var(--mxm-contentPrimary);
+                              font-size: 13px;
+                              font-weight: 500;
+                            ">${language}</div>
+                          </div>
+                          
+                          <!-- Permission for this language -->
+                          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+                            <div style="color: var(--mxm-contentSecondary); font-size: 13px;">Permission:</div>
+                            ${langPermission ? `
+                              <div style="display: flex; align-items: center; gap: 6px;">
+                                <span style="font-size: 14px;">${lockDisplay[langPermission] ? lockDisplay[langPermission][0] : '🔒'}</span>
+                                <span style="
+                                  color: ${langPermission === 'no' ? '#ff4444' : langPermission === 'ask' ? '#ffbb00' : '#2ecc71'};
+                                  font-weight: 500;
+                                  font-size: 13px;
+                                ">${lockDisplay[langPermission] ? lockDisplay[langPermission][1] : 'Unknown'}</span>
+                              </div>
+                            ` : `
+                              <span style="color: var(--mxm-contentTertiary); font-size: 13px;">🔒 No data</span>
+                            `}
+                          </div>
+                          
+                          <!-- Note for this language -->
+                          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+                            <div style="color: var(--mxm-contentSecondary); font-size: 13px;">Note:</div>
+                            ${uniqueNotes.length > 0 ? `
+                              <div style="text-align: right; max-width: 60%;">
+                                ${uniqueNotes.map(note => `
+                                  <div style="
+                                    color: var(--mxm-contentPrimary);
+                                    font-size: 13px;
+                                    line-height: 1.5;
+                                    word-wrap: break-word;
+                                    margin-bottom: ${uniqueNotes.indexOf(note) < uniqueNotes.length - 1 ? '8px' : '0'};
+                                  ">${note}</div>
+                                `).join('')}
+                              </div>
+                            ` : `
+                              <div style="color: var(--mxm-contentTertiary); font-size: 13px;">—</div>
+                            `}
+                          </div>
+                        </div>
+                      `;
+                    }).join('')}
+                  ` : `
+                    <!-- No overwrite info message -->
+                    <div style="
+                      padding-top: 16px;
+                      padding-bottom: 16px;
+                      text-align: center;
+                      font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+                    ">
+                      <div style="
+                        color: var(--mxm-contentTertiary);
+                        font-size: 13px;
+                        font-style: italic;
+                      ">No overwrite info; proceed with caution</div>
+                    </div>
+                  `}
+
+                  <!-- Action Buttons -->
+                  ${(matchRows[0]?.musixmatch_link || matchRows[0]?.slack_link) ? `
+                    <div style="display: flex; gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--mxm-backgroundTertiary);">
+                      ${matchRows[0]?.musixmatch_link ? `
+                        <a href="${matchRows[0].musixmatch_link}" target="_blank" style="
+                          display: flex;
+                          align-items: center;
+                          gap: 6px;
+                          padding: 6px 10px;
+                          text-decoration: none;
+                          color: var(--mxm-contentPrimary);
+                          font-size: 13px;
+                          font-weight: 500;
+                          font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+                          border-radius: 6px;
+                          transition: background 0.2s ease;
+                        " onmouseover="this.style.background='var(--mxm-backgroundHover)'" onmouseout="this.style.background='transparent'">
+                          <i class="fas fa-user-circle" style="color: #FC542E; font-size: 14px;"></i>
+                          Profile
+                        </a>
+                      ` : ''}
+                      ${matchRows[0]?.slack_link ? `
+                        <a href="${matchRows[0].slack_link}" target="_blank" style="
+                          display: flex;
+                          align-items: center;
+                          gap: 6px;
+                          padding: 6px 10px;
+                          text-decoration: none;
+                          color: var(--mxm-contentPrimary);
+                          font-size: 13px;
+                          font-weight: 500;
+                          font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+                          border-radius: 6px;
+                          transition: background 0.2s ease;
+                        " onmouseover="this.style.background='var(--mxm-backgroundHover)'" onmouseout="this.style.background='transparent'">
+                          <i class="fab fa-slack" style="color: #FC542E; font-size: 14px;"></i>
+                          Slack
+                        </a>
+                      ` : ''}
+                    </div>
+                  ` : ''}
+                ` : `
+                  <!-- Error message when no contributors found -->
+                  <div class="r-13awgt0 r-1ifxtd0" style="padding-top: 16px;">
+                    <div dir="auto" class="css-146c3p1 r-fdjqy7 r-1inkyih r-135wba7" style="
+                      color: var(--mxm-contentPrimary);
+                      font-size: 13px;
+                      font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+                    ">⚠️ Couldn't find any contributors. <strong>Click the contributor viewer button for more detailed information.</strong>
+                    </div>
+                  </div>
+                `}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Find the assistant menu content area using r-* classes (css-* classes are dynamic)
+      const assistantContent = assistantMenu.querySelector('[class*="r-150rngu"][class*="r-eqz5dr"]');
+      if (!assistantContent) {
+        debugLog('ERROR: Could not find assistant content area');
+        setTimeout(checkForAssistantMenu, 1000);
+        return;
+      }
+      
+      // Find the assistant header using r-* classes
+      const assistantHeader = assistantContent.querySelector('[class*="r-16y2uox"][class*="r-1q142lx"]');
+      if (!assistantHeader) {
+        debugLog('ERROR: Could not find assistant header');
+        setTimeout(checkForAssistantMenu, 1000);
+        return;
+      }
+      
+      // Create a wrapper div for the card
+      const cardWrapper = document.createElement('div');
+      cardWrapper.innerHTML = cardHTML;
+      cardWrapper.className = 'mxm-contributor-data-wrapper';
+      
+      // Insert the card after the header
+      // The header is inside the content area, so we insert after it
+      if (assistantHeader.parentNode) {
+        try {
+          assistantHeader.parentNode.insertBefore(cardWrapper, assistantHeader.nextSibling);
+          debugLog('✓ Contributor Data card successfully added to assistant menu');
+        } catch (e) {
+          debugLog('ERROR: Failed to insert card:', e);
+          setTimeout(checkForAssistantMenu, 1000);
+        }
+      } else {
+        debugLog('ERROR: Assistant header has no parent node');
+        setTimeout(checkForAssistantMenu, 1000);
+      }
+    };
+
+    // Start checking for the assistant menu
+    checkForAssistantMenu();
+    
+    // Also watch for the assistant menu to appear dynamically
+    const observer = new MutationObserver((mutations) => {
+      const assistantMenu = document.querySelector('[class*="r-e6wx2c"][class*="r-24i33s"]');
+      if (assistantMenu && !assistantMenu.querySelector('.mxm-contributor-data-card') && 
+          !document.querySelector('.mxm-contributor-data-card')) {
+        const currentContributor = currentPageContributors[0];
+        if (currentContributor) {
+          debugLog('Assistant menu appeared, attempting to add card');
+          checkForAssistantMenu();
+        }
+      }
+    });
+    
+    // Observe the document body for changes
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    
+    // Clean up observer after a reasonable time
+    setTimeout(() => {
+      observer.disconnect();
+    }, 60000); // Stop observing after 60 seconds
+  };
+
+  // Function to update the contributor data card when data changes
+  const updateContributorDataCard = () => {
+    const card = document.querySelector('.mxm-contributor-data-card');
+    if (!card) return;
+
+    const currentContributor = currentPageContributors[0];
+    if (!currentContributor) {
+      card.style.display = 'none';
+      return;
+    }
+
+    // Update the card content
+    const keyExact = currentContributor.name.toLowerCase();
+    const keyInit = normalizeName(currentContributor.name);
+    const matchRows = permissionData[keyExact] || permissionData[keyInit] || [];
+    const firstPerm = matchRows[0]?.permission;
+
+    // Update contributor name and details
+    const nameElement = card.querySelector('div[style*="font-weight: 500"]');
+    if (nameElement) {
+      nameElement.textContent = currentContributor.name;
+    }
+
+    const roleElement = card.querySelector('div[style*="font-size: 12px"]');
+    if (roleElement) {
+      roleElement.textContent = `${currentContributor.role} • ${currentContributor.type.replace(/_/g, ' ')}`;
+    }
+
+    // Update permission display
+    const permissionElement = card.querySelector('span[style*="color:"]');
+    if (permissionElement && firstPerm) {
+      permissionElement.textContent = lockDisplay[firstPerm] ? lockDisplay[firstPerm][1] : 'Unknown permission';
+      permissionElement.style.color = firstPerm === 'no' ? '#ff4444' : firstPerm === 'ask' ? '#ffbb00' : '#2ecc71';
+    }
+
+    debugLog('Contributor Data card updated');
+  };
+
+  // Create the contributor data card when the page loads
+  setTimeout(() => {
+    createContributorDataCard();
+  }, 2000);
+
+  // Update the card when contributor data changes
+  // Only wrap the function once to avoid reassignment errors
+  if (!fetchContributorData._mxmWrapped) {
+    const originalFetchContributorData = fetchContributorData;
+    fetchContributorData = async (lyricsUrl) => {
+      const result = await originalFetchContributorData(lyricsUrl);
+      if (result) {
+        setTimeout(() => {
+          // Try to update existing card
+          updateContributorDataCard();
+          // If card doesn't exist, try to create it
+          if (!document.querySelector('.mxm-contributor-data-card')) {
+            debugLog('Card not found after data fetch, attempting to create it');
+            createContributorDataCard();
+          }
+        }, 500);
+      }
+      return result;
+    };
+    fetchContributorData._mxmWrapped = true;
+  }
 
   // Ensure the contributors panel is always scrollable, even if the main page disables scrolling
   panel.style.overflowY = 'auto';
