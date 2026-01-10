@@ -39,6 +39,8 @@
   let hasAcknowledgedWarning = false;
   let debugMode = false;
   let currentPageContributors = []; // track contributors for current page only
+  let pendingFetches = new Map(); // Track pending fetches to prevent duplicates
+  let fetchDebounceTimers = new Map(); // Track debounce timers
   
   // Simple resize variables
   let isResizing = false;
@@ -1012,6 +1014,38 @@
     jumpButtons.style.display = 'none';
   };
 
+  // debounced fetch function to wait for page stability
+  // Must be defined before the observer that uses it.
+  const debouncedFetchContributorData = (lyricsUrl, delay = 500) => {
+    const fetchKey = lyricsUrl;
+    
+    // Clear existing timer for this URL
+    if (fetchDebounceTimers.has(fetchKey)) {
+      clearTimeout(fetchDebounceTimers.get(fetchKey));
+    }
+    
+    // Set new timer
+    const timer = setTimeout(() => {
+      fetchDebounceTimers.delete(fetchKey);
+      fetchContributorData(lyricsUrl).then(contributors => {
+        if (contributors) {
+          currentPageContributors = contributors;
+          
+          // Auto-refresh panel if it's already open
+          if (panel.style.display === 'block') {
+            debugLog('Panel is open, auto-refreshing with new contributors');
+            renderContributors(contributors, true);
+          }
+        }
+      }).catch(err => {
+        debugError(err, { url: lyricsUrl, context: 'debouncedFetchContributorData' });
+      });
+    }, delay);
+    
+    fetchDebounceTimers.set(fetchKey, timer);
+    debugLog('Debounced fetch scheduled:', { url: lyricsUrl, delay: delay });
+  };
+
   const observer = new MutationObserver(mutations => {
     for (const m of mutations) {
       for (const node of m.addedNodes) {
@@ -1072,18 +1106,8 @@
           lastTaskId = trackId;
           button.style.display = 'block';
 
-          // Fetch contributor data immediately
-          fetchContributorData(lyricsUrl).then(contributors => {
-            if (contributors) {
-              currentPageContributors = contributors;
-              
-              // Auto-refresh panel if it's already open
-              if (panel.style.display === 'block') {
-                debugLog('Panel is open, auto-refreshing with new contributors');
-                renderContributors(contributors, true);
-              }
-            }
-          });
+          // Fetch contributor data with debounce to ensure page is stable
+          debouncedFetchContributorData(lyricsUrl, 500);
         return;
       }
   
@@ -1116,18 +1140,8 @@
               lastTaskId = newTaskId;
               button.style.display = 'block';
 
-              // Fetch contributor data immediately
-              fetchContributorData(url).then(contributors => {
-                if (contributors) {
-                  currentPageContributors = contributors;
-                  
-                  // Auto-refresh panel if it's already open
-                  if (panel.style.display === 'block') {
-                    debugLog('Panel is open, auto-refreshing with new contributors');
-                    renderContributors(contributors);
-                  }
-                }
-              });
+              // Fetch contributor data with debounce to ensure page is stable
+              debouncedFetchContributorData(url, 500);
             }
           }
         }
@@ -1144,11 +1158,20 @@
     referrer: document.referrer
   });
 
-  // Add new function to fetch contributor data
-  let fetchContributorData = (lyricsUrl) => {
+  // Add new function to fetch contributor data with retry logic
+  let fetchContributorData = (lyricsUrl, retryCount = 0, maxRetries = 3) => {
+    const fetchKey = lyricsUrl;
+    
+    // Prevent duplicate simultaneous fetches for the same URL
+    if (pendingFetches.has(fetchKey)) {
+      debugLog('Fetch already in progress for URL, returning existing promise:', lyricsUrl);
+      return pendingFetches.get(fetchKey);
+    }
     const startTime = Date.now();
     debugLog('Fetching contributor data:', {
       url: lyricsUrl,
+      retryAttempt: retryCount,
+      maxRetries: maxRetries,
       timestamp: new Date().toISOString(),
       referrer: document.referrer,
       currentPage: window.location.href
@@ -1167,8 +1190,8 @@
     };
     debugLog('Song Info:', songInfo);
 
-    // start both requests in parallel
-    return Promise.all([
+    // Create the fetch promise
+    const fetchPromise = Promise.all([
       fetchPermissionData(),
       new Promise((resolve, reject) => {
         GM_xmlhttpRequest({
@@ -1177,6 +1200,11 @@
           onload: res => {
             try {
             const text = res.responseText;
+              
+              // Check if response is valid (not empty and contains expected data)
+              if (!text || text.length === 0) {
+                throw new Error('Empty response from server');
+              }
               
               // Extract song metadata
               const songTitleMatch = text.match(/"name":"([^"]+)"/);
@@ -1232,11 +1260,12 @@
               resolve(newContributors);
             } catch (error) {
               debugError(error, { 
-                responseText: res.responseText,
+                responseText: res.responseText?.substring(0, 500), // Limit log size
                 songInfo,
                 url: lyricsUrl,
                 responseStatus: res.status,
-                responseType: res.responseType
+                responseType: res.responseType,
+                retryCount: retryCount
               });
               reject(error);
             }
@@ -1246,13 +1275,17 @@
               url: lyricsUrl,
               songInfo,
               errorType: error.type,
-              errorStatus: error.status
+              errorStatus: error.status,
+              retryCount: retryCount
             });
             reject(error);
           }
         });
       })
     ]).then(([permissions, newContributors]) => {
+      // Remove from pending fetches on success
+      pendingFetches.delete(fetchKey);
+      
       currentPageContributors = newContributors;
       lastLyricsUrl = lyricsUrl;
 
@@ -1289,22 +1322,49 @@
         totalContributors: newContributors.length,
         permissionsFound: Object.keys(permissions).length,
         url: lyricsUrl,
-        fetchDuration: Date.now() - startTime
+        fetchDuration: Date.now() - startTime,
+        retryCount: retryCount
       });
 
       debugPerformance('Total contributor data processing', startTime);
       return newContributors;
     }).catch((error) => {
+      // Remove from pending fetches on error
+      pendingFetches.delete(fetchKey);
+      
+      // Retry logic with exponential backoff
+      if (retryCount < maxRetries) {
+        const delay = Math.min(1000 * Math.pow(2, retryCount), 5000); // Exponential backoff, max 5s
+        debugLog(`Fetch failed, retrying in ${delay}ms (attempt ${retryCount + 1}/${maxRetries}):`, {
+          url: lyricsUrl,
+          error: error.message || error,
+          delay: delay
+        });
+        
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(fetchContributorData(lyricsUrl, retryCount + 1, maxRetries));
+          }, delay);
+        });
+      }
+      
+      // All retries exhausted
       debugError(error, {
         url: lyricsUrl,
         lastLyricsUrl,
         currentContributors: currentPageContributors,
         songInfo,
-        fetchDuration: Date.now() - startTime
+        fetchDuration: Date.now() - startTime,
+        retryCount: retryCount,
+        maxRetries: maxRetries
       });
-      showMessage('⚠️ Failed to load contributor data.', 'orange');
+      showMessage('⚠️ Failed to load contributor data after multiple attempts.', 'orange');
       return null;
     });
+    
+    // Store the promise to prevent duplicates
+    pendingFetches.set(fetchKey, fetchPromise);
+    return fetchPromise;
   };
 
   button.onclick = async () => {
