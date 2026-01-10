@@ -2,8 +2,8 @@
 // @name         Musixmatch-Contributor-Viewer
 // @author       Bryce
 // @namespace    http://tampermonkey.net/
-// @version      5.4.1
-// @description  Fixed a critical bug where the overwrite popup would either not appear when clicking the save button or would appear infinitely when clicking "Proceed". Improved reliability of the save button interceptor.
+// @version      5.4.2
+// @description  Fixed a edge case bug where the script would error-loop indefinitely when opening new tasks. Version 5.4.2.
 // @icon         https://raw.githubusercontent.com/bryyce19/mxm-contribs/refs/heads/main/img/finallogosquare.png
 // @match        https://curators.musixmatch.com/*
 // @match        https://curators-beta.musixmatch.com/*
