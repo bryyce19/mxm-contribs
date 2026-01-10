@@ -3,7 +3,7 @@
 // @author       Bryce
 // @namespace    http://tampermonkey.net/
 // @version      5.4.2
-// @description  Fixed a edge case bug where the script would error-loop indefinitely when opening new tasks. Version 5.4.2.
+// @description  Fixed an edge-case bug where the script would error-loop indefinitely when opening new tasks. Version 5.4.2.
 // @icon         https://raw.githubusercontent.com/bryyce19/mxm-contribs/refs/heads/main/img/finallogosquare.png
 // @match        https://curators.musixmatch.com/*
 // @match        https://curators-beta.musixmatch.com/*
