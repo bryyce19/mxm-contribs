@@ -134,6 +134,58 @@
       color: #FF5228;
     }
 
+    .top-banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 6px 40px 6px 16px;
+      background: #fff5f2;
+      border-bottom: 1px solid rgba(255, 82, 40, 0.15);
+      font-size: 13px;
+      color: #a85c28;
+    }
+    .top-banner.hidden {
+      display: none;
+    }
+    body.banner-visible {
+      padding-top: 36px;
+    }
+    .top-banner a {
+      color: #c45c2a;
+      text-decoration: underline;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .top-banner a:hover {
+      color: #e86b2e;
+    }
+    .top-banner-close {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #a85c28;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s, background 0.2s;
+    }
+    .top-banner-close:hover {
+      color: #e86b2e;
+      background: rgba(168, 92, 40, 0.12);
+    }
+
     #modalOverlay {
       position: fixed;
       top: 0; left: 0;
@@ -692,6 +744,12 @@
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W3H6Q2W4"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
+  <div class="top-banner" id="topBanner">
+    <span>Using beta studio? The <strong>Latest Contributor</strong> section in the assistant menu isn’t supported yet.</span>
+    <a href="./bugs.html#overwrite-sidebar-beta">Details</a>
+    <button type="button" class="top-banner-close" id="topBannerClose" title="Dismiss" aria-label="Dismiss banner"><i class="fas fa-times"></i></button>
+  </div>
+
   <div class="header">
     <img src="./img/finallogo.png" alt="Musixmatch Contributor Viewer Logo">
     <div class="header-links">
@@ -800,6 +858,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script>
+    (function() {
+      const banner = document.getElementById('topBanner');
+      const closeBtn = document.getElementById('topBannerClose');
+      const key = 'mxm-contribs-banner-closed';
+      if (localStorage.getItem(key) === '1' && banner) {
+        banner.classList.add('hidden');
+      } else if (banner) {
+        document.body.classList.add('banner-visible');
+      }
+      if (closeBtn && banner) {
+        closeBtn.addEventListener('click', function() {
+          banner.classList.add('hidden');
+          document.body.classList.remove('banner-visible');
+          try { localStorage.setItem(key, '1'); } catch (e) {}
+        });
+      }
+    })();
+
     const installBtn = document.getElementById('installBtn');
     const modalOverlay = document.getElementById('modalOverlay');
     const modalClose = document.getElementById('modalClose');
