@@ -142,7 +142,6 @@
       z-index: 9999;
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 8px;
       padding: 6px 40px 6px 16px;
       background: #fff5f2;
@@ -150,11 +149,24 @@
       font-size: 13px;
       color: #a85c28;
     }
+    .top-banner-text {
+      flex: 1;
+      min-width: 0;
+      text-align: center;
+    }
     .top-banner.hidden {
       display: none;
     }
     body.banner-visible {
       padding-top: 36px;
+    }
+    @media screen and (max-width: 768px) {
+      body.banner-visible {
+        padding-top: 64px;
+      }
+      .top-banner {
+        padding: 10px 40px 10px 12px;
+      }
     }
     .top-banner a {
       color: #c45c2a;
@@ -745,8 +757,7 @@
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <div class="top-banner" id="topBanner">
-    <span>Using beta studio? The <strong>Latest Contributor</strong> section in the assistant menu isn’t supported yet.</span>
-    <a href="./bugs.html#overwrite-sidebar-beta">Details</a>
+    <span class="top-banner-text">Using beta studio? The <strong>Latest Contributor</strong> section in the assistant menu isn’t supported yet. <a href="./bugs.html#overwrite-sidebar-beta">Details</a></span>
     <button type="button" class="top-banner-close" id="topBannerClose" title="Dismiss" aria-label="Dismiss banner"><i class="fas fa-times"></i></button>
   </div>
 
