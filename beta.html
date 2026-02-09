@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Musixmatch Contributor Viewer – Beta</title>
-  
+
   <!-- Open Graph meta tags -->
   <meta property="og:title" content="Musixmatch Contributor Viewer - Beta">
-  <meta property="og:description" content="Try the beta version of the Musixmatch Contributor Viewer with experimental features.">
+  <meta property="og:description"
+    content="Try the beta version of the Musixmatch Contributor Viewer with experimental features.">
   <meta property="og:image" content="https://bryyce19.github.io/mxm-contribs/img/splashfinalv5.png">
   <meta property="og:url" content="https://bryyce19.github.io/mxm-contribs/beta">
   <meta property="og:type" content="website">
@@ -17,8 +19,9 @@
   <meta name="twitter:description" content="Try the beta version with experimental features.">
   <meta name="twitter:image" content="https://bryyce19.github.io/mxm-contribs/img/splashfinalv5.png">
   <meta name="theme-color" content="#FF5228">
-  
-  <link rel="icon" type="image/x-icon" href="https://em-content.zobj.net/source/apple/419/busts-in-silhouette_1f465.png">
+
+  <link rel="icon" type="image/x-icon"
+    href="https://em-content.zobj.net/source/apple/419/busts-in-silhouette_1f465.png">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     body {
@@ -33,6 +36,7 @@
       background: rgba(255, 82, 40, 0.18);
       color: #222;
     }
+
     ::-moz-selection {
       background: rgba(255, 82, 40, 0.18);
       color: #222;
@@ -94,6 +98,44 @@
       font-weight: 500;
       text-align: left;
       line-height: 1.5;
+    }
+
+    .warning {
+      background-color: #ffcdcd;
+      color: #850404;
+      padding: 20px;
+      margin: 40px auto 30px;
+      max-width: 600px;
+      border-radius: 8px;
+      border: 1px solid #ffc0c0;
+      font-weight: 500;
+      text-align: left;
+      line-height: 1.5;
+
+    }
+
+    .warning i {
+      margin-right: 8px;
+      color: #850404;
+    }
+
+    .warning strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.1em;
+    }
+
+    .warning ul {
+      margin: 10px 0 0 0;
+      padding-left: 20px;
+    }
+
+    .warning li {
+      margin-bottom: 5px;
+    }
+
+    .warning li:last-child {
+      margin-bottom: 0;
     }
 
     .banner i {
@@ -164,7 +206,8 @@
 
     #modalOverlay {
       position: fixed;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 100vw;
       height: 100vh;
       background: rgba(0, 0, 0, 0.7);
@@ -176,8 +219,13 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
     }
 
     #modalContent {
@@ -187,14 +235,21 @@
       width: 90%;
       padding: 30px;
       text-align: left;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
       position: relative;
       animation: slideUp 0.3s ease-in-out;
     }
 
     @keyframes slideUp {
-      from { transform: translateY(50px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
     }
 
     #modalContent h2 {
@@ -227,7 +282,8 @@
       color: #555;
     }
 
-    .alert, .success {
+    .alert,
+    .success {
       padding: 12px;
       border-radius: 8px;
       margin-bottom: 1em;
@@ -333,31 +389,39 @@
   </style>
 
   <script>
-    function _0x4e99(){const _0x29b3f8=['1538640lzoeFb','location','Enter\x20the\x20beta\x20password:','Incorrect\x20password.\x20Redirecting\x20to\x20main\x20site.','187276uurpEf','href','3475464ipvysA','7GGgzBl','45javzaB','25LdjWvu','110rrqaqi','2246086XwaPGa','7653136cqnnyt','3eOSoYx','697512tKTuvI','iamcool27','2418810WVawgU'];_0x4e99=function(){return _0x29b3f8;};return _0x4e99();}function _0x294f(_0x1365b9,_0x5ab3cf){const _0x4e9931=_0x4e99();return _0x294f=function(_0x294fe8,_0x57c925){_0x294fe8=_0x294fe8-0xa6;let _0x2a42d0=_0x4e9931[_0x294fe8];return _0x2a42d0;},_0x294f(_0x1365b9,_0x5ab3cf);}(function(_0x1648c5,_0xba191d){const _0x210157=_0x294f,_0x16e07b=_0x1648c5();while(!![]){try{const _0x5fc61a=parseInt(_0x210157(0xb3))/0x1+parseInt(_0x210157(0xb0))/0x2*(-parseInt(_0x210157(0xb2))/0x3)+-parseInt(_0x210157(0xa9))/0x4*(-parseInt(_0x210157(0xae))/0x5)+parseInt(_0x210157(0xb6))/0x6+-parseInt(_0x210157(0xac))/0x7*(parseInt(_0x210157(0xb1))/0x8)+parseInt(_0x210157(0xad))/0x9*(-parseInt(_0x210157(0xb5))/0xa)+-parseInt(_0x210157(0xaf))/0xb*(-parseInt(_0x210157(0xab))/0xc);if(_0x5fc61a===_0xba191d)break;else _0x16e07b['push'](_0x16e07b['shift']());}catch(_0x30f0c0){_0x16e07b['push'](_0x16e07b['shift']());}}}(_0x4e99,0xc2229),(function(){const _0x28f84a=_0x294f,_0x1b0e8e=prompt(_0x28f84a(0xa7));_0x1b0e8e!==_0x28f84a(0xb4)&&(alert(_0x28f84a(0xa8)),window[_0x28f84a(0xa6)][_0x28f84a(0xaa)]='https://bryyce19.github.io/mxm-contribs/');}()));
+    function _0x4e99() { const _0x29b3f8 = ['1538640lzoeFb', 'location', 'Enter\x20the\x20beta\x20password:', 'Incorrect\x20password.\x20Redirecting\x20to\x20main\x20site.', '187276uurpEf', 'href', '3475464ipvysA', '7GGgzBl', '45javzaB', '25LdjWvu', '110rrqaqi', '2246086XwaPGa', '7653136cqnnyt', '3eOSoYx', '697512tKTuvI', 'iamcool27', '2418810WVawgU']; _0x4e99 = function () { return _0x29b3f8; }; return _0x4e99(); } function _0x294f(_0x1365b9, _0x5ab3cf) { const _0x4e9931 = _0x4e99(); return _0x294f = function (_0x294fe8, _0x57c925) { _0x294fe8 = _0x294fe8 - 0xa6; let _0x2a42d0 = _0x4e9931[_0x294fe8]; return _0x2a42d0; }, _0x294f(_0x1365b9, _0x5ab3cf); } (function (_0x1648c5, _0xba191d) { const _0x210157 = _0x294f, _0x16e07b = _0x1648c5(); while (!![]) { try { const _0x5fc61a = parseInt(_0x210157(0xb3)) / 0x1 + parseInt(_0x210157(0xb0)) / 0x2 * (-parseInt(_0x210157(0xb2)) / 0x3) + -parseInt(_0x210157(0xa9)) / 0x4 * (-parseInt(_0x210157(0xae)) / 0x5) + parseInt(_0x210157(0xb6)) / 0x6 + -parseInt(_0x210157(0xac)) / 0x7 * (parseInt(_0x210157(0xb1)) / 0x8) + parseInt(_0x210157(0xad)) / 0x9 * (-parseInt(_0x210157(0xb5)) / 0xa) + -parseInt(_0x210157(0xaf)) / 0xb * (-parseInt(_0x210157(0xab)) / 0xc); if (_0x5fc61a === _0xba191d) break; else _0x16e07b['push'](_0x16e07b['shift']()); } catch (_0x30f0c0) { _0x16e07b['push'](_0x16e07b['shift']()); } } }(_0x4e99, 0xc2229), (function () { const _0x28f84a = _0x294f, _0x1b0e8e = prompt(_0x28f84a(0xa7)); _0x1b0e8e !== _0x28f84a(0xb4) && (alert(_0x28f84a(0xa8)), window[_0x28f84a(0xa6)][_0x28f84a(0xaa)] = 'https://bryyce19.github.io/mxm-contribs/'); }()));
   </script>
 </head>
-  <!-- Google tag (gtag.js) -->
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ENNP84EZ15"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
+  function gtag() { dataLayer.push(arguments); }
   gtag('js', new Date());
 
   gtag('config', 'G-ENNP84EZ15');
 </script>
-  
+
 <body>
   <div class="header">
     <a href="index.html"><img src="./img/finallogo.png" alt="Musixmatch Contributor Viewer Logo"></a>
     <div class="header-links">
-      <a href="https://github.com/bryyce19/mxm-contribs" target="_blank" title="GitHub" class="header-link"><i class="fab fa-github"></i></a>
-      <a href="https://lyricscurators.slack.com/team/U07AV1BPT5J" target="_blank" title="Slack" class="header-link"><i class="fab fa-slack"></i></a>
+      <a href="https://github.com/bryyce19/mxm-contribs" target="_blank" title="GitHub" class="header-link"><i
+          class="fab fa-github"></i></a>
+      <a href="https://lyricscurators.slack.com/team/U07AV1BPT5J" target="_blank" title="Slack" class="header-link"><i
+          class="fab fa-slack"></i></a>
     </div>
   </div>
 
   <h1>Install the Musixmatch Contributor Viewer (Beta)</h1>
-  
+
   <a class="button" id="installBtn" href="#">Install Beta Script</a>
+
+
+  <div class="warning">
+    <i class="fas fa-warning"></i> <strong>DEPRECATION WARNING!</strong>
+    This version of the Contributor Viewer is deprecated. Please use the production version instead. Updates to come.
+  </div>
 
   <div class="banner">
     <i class="fas fa-flask"></i> <strong>Beta Version Warning</strong>
@@ -379,16 +443,21 @@
       <h2 id="modalTitle">About the BETA Contributor Viewer</h2>
 
       <p id="modalDesc">
-        Welcome to the beta! This version has the same base features, but may include some experimental features. If you see bugs, you must report them immediately.
+        Welcome to the beta! This version has the same base features, but may include some experimental features. If you
+        see bugs, you must report them immediately.
       </p>
 
       <div id="tmStatus" class="alert">
-        <i class="fas fa-exclamation-triangle"></i> You must have <strong>Tampermonkey</strong> installed! <a href="https://www.tampermonkey.net/" target="_blank">Get it here</a>
+        <i class="fas fa-exclamation-triangle"></i> You must have <strong>Tampermonkey</strong> installed! <a
+          href="https://www.tampermonkey.net/" target="_blank">Get it here</a>
       </div>
 
       <p>
-        <strong>Source Code:</strong> <a href="https://github.com/bryyce19/mxm-contribs/blob/beta/Musixmatch-Contributor-Viewer.user.js" target="_blank"><i class="fab fa-github"></i> View on GitHub</a><br>
-        <strong>Usage Instructions:</strong> <a href="https://bryyce19.github.io/mxm-contribs/guide.html" target="_blank"><i class="fas fa-book-open"></i> Read Docs</a>
+        <strong>Source Code:</strong> <a
+          href="https://github.com/bryyce19/mxm-contribs/blob/beta/Musixmatch-Contributor-Viewer.user.js"
+          target="_blank"><i class="fab fa-github"></i> View on GitHub</a><br>
+        <strong>Usage Instructions:</strong> <a href="https://bryyce19.github.io/mxm-contribs/guide.html"
+          target="_blank"><i class="fas fa-book-open"></i> Read Docs</a>
       </p>
 
       <button id="continueBtn">Continue to Install</button>
@@ -425,7 +494,7 @@
       }).then(res => res.json())
         .then(data => console.log('Logged:', data))
         .catch(err => console.error('Fetch error:', err));
-      
+
       confetti({
         particleCount: 100,
         spread: 70,
@@ -458,12 +527,12 @@
       completed.style.display = 'block';
       setTimeout(() => {
         const encodedLink = "aHR0cHM6Ly9naXN0LmdpdGh1Yi5jb20v" +
-                    "YnJ5eWNlMTkvMzNkZDY1ZGE4Nzc4YTFj" +
-                    "YjY3YTM5MzZiMmYzMGY4ZGIvcmF3LzQ3" +
-                    "MzFjZTdjMGViNDE0N2RlOWQzYzA2YjU0" +
-                    "NmJjOGNhODUwNzk1NWUvbXVzaXhtYXRj" +
-                    "aC1jb250cmlidXRvci12aWV3ZXItYmV0" +
-                    "YS51c2VyLmpz";
+          "YnJ5eWNlMTkvMzNkZDY1ZGE4Nzc4YTFj" +
+          "YjY3YTM5MzZiMmYzMGY4ZGIvcmF3LzQ3" +
+          "MzFjZTdjMGViNDE0N2RlOWQzYzA2YjU0" +
+          "NmJjOGNhODUwNzk1NWUvbXVzaXhtYXRj" +
+          "aC1jb250cmlidXRvci12aWV3ZXItYmV0" +
+          "YS51c2VyLmpz";
         const decodedLink = atob(encodedLink);
         window.open(decodedLink, "_blank");
       }, 100);
@@ -471,4 +540,5 @@
   </script>
 
 </body>
+
 </html>

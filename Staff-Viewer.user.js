@@ -3,7 +3,7 @@
 // @author       Bryce
 // @namespace    http://tampermonkey.net/
 // @version      1.1
-// @description  [BETA - BUGS EXIST!] This script adds a staff badge to the profile header of Musixmatch specialists. Note that this is a complete list of staff, but it is not updated automatically. New Specialist accounts may appear as Staff until they are added to the list.
+// @description  [DEPRECATED] This script adds a staff badge to the profile header of Musixmatch specialists. Note that this is a complete list of staff, but it is not updated automatically. New Specialist accounts may appear as Staff until they are added to the list.
 // @match        https://www.musixmatch.com/profile/*
 // @grant        none
 // @updateURL    https://github.com/bryyce19/mxm-contribs/raw/refs/heads/main/Staff-Viewer.user.js
