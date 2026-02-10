@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Musixmatch-Contributor-Viewer-Gemini
+// @name         Musixmatch-Contributor-Viewer
 // @author       Bryce
 // @namespace    http://tampermonkey.net/
-// @version      5.5.0
+// @version      5.5.1
 // @description  Removed jump buttons, added click-to-close, squashed some bugs, and did some other cool things. See the changelog.
 // @icon         https://raw.githubusercontent.com/bryyce19/mxm-contribs/refs/heads/main/img/finallogosquare.png
 // @match        https://curators.musixmatch.com/*
