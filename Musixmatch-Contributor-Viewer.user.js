@@ -2,8 +2,8 @@
 // @name         Musixmatch-Contributor-Viewer
 // @author       Bryce
 // @namespace    http://tampermonkey.net/
-// @version      5.4.3
-// @description  Removed Jump Buttons and redesigned the overwrite warning popup for a cleaner look. Updated contact and profile buttons to use subtle icons for better consistency.
+// @version      5.5.2
+// @description  Removed latest contributor data card for Beta Studio temporarily.
 // @icon         https://raw.githubusercontent.com/bryyce19/mxm-contribs/refs/heads/main/img/finallogosquare.png
 // @match        https://curators.musixmatch.com/*
 // @match        https://curators-beta.musixmatch.com/*
