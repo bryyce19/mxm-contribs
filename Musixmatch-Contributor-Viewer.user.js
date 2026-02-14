@@ -2,8 +2,8 @@
 // @name         Musixmatch-Contributor-Viewer
 // @author       Bryce
 // @namespace    http://tampermonkey.net/
-// @version      5.5.1
-// @description  Removed jump buttons, added click-to-close, squashed some bugs, and did some other cool things. See the changelog.
+// @version      5.4.3
+// @description  Removed Jump Buttons and redesigned the overwrite warning popup for a cleaner look. Updated contact and profile buttons to use subtle icons for better consistency.
 // @icon         https://raw.githubusercontent.com/bryyce19/mxm-contribs/refs/heads/main/img/finallogosquare.png
 // @match        https://curators.musixmatch.com/*
 // @match        https://curators-beta.musixmatch.com/*
@@ -2168,6 +2168,12 @@
 
   // Function to create and inject the Contributor Data card into the assistant menu
   const createContributorDataCard = () => {
+    // Disable entirely for Beta Studio
+    if (window.location.hostname === 'curators-beta.musixmatch.com') {
+      debugLog('Beta Studio detected - Contributor Data Card disabled');
+      return;
+    }
+
     let retryCount = 0;
     const maxRetries = 30; // Try for up to 30 seconds
 
