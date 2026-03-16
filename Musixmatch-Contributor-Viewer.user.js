@@ -2,8 +2,8 @@
 // @name         Musixmatch-Contributor-Viewer
 // @author       Bryce
 // @namespace    http://tampermonkey.net/
-// @version      5.5.2
-// @description  Removed latest contributor data card for Beta Studio temporarily.
+// @version      5.5.3
+// @description  Fixed a bug where the script would show the contributor's name instead of their language in the latest contributor card + some other small fixes.
 // @icon         https://raw.githubusercontent.com/bryyce19/mxm-contribs/refs/heads/main/img/finallogosquare.png
 // @match        https://curators.musixmatch.com/*
 // @match        https://curators-beta.musixmatch.com/*
@@ -2168,7 +2168,7 @@
 
   // Function to create and inject the Contributor Data card into the assistant menu
   const createContributorDataCard = () => {
-    // Disable entirely for Beta Studio
+    // Disable entirely for Beta Studio as requested
     if (window.location.hostname === 'curators-beta.musixmatch.com') {
       debugLog('Beta Studio detected - Contributor Data Card disabled');
       return;
@@ -2189,6 +2189,21 @@
         .filter(el => el.textContent.trim() === 'Assistant');
 
       for (const label of assistantLabels) {
+        // [New] Ignore if the label is inside a button (e.g. the toggle button in Sync menu)
+        // Check for button role or button tag up the tree a few levels
+        let parent = label.parentElement;
+        let isButton = false;
+        for (let i = 0; i < 4; i++) {
+          if (!parent) break;
+          if (parent.tagName === 'BUTTON' || parent.getAttribute('role') === 'button') {
+            isButton = true;
+            break;
+          }
+          parent = parent.parentElement;
+        }
+        if (isButton) continue;
+
+
         let current = label;
         // Traverse up max 10 levels to find the common container
         for (let i = 0; i < 10; i++) {
@@ -2600,53 +2615,12 @@
 
   // Function to update the contributor data card when data changes
   const updateContributorDataCard = () => {
-    const card = document.querySelector('.mxm-contributor-data-card');
-    if (!card) return;
-
-    const currentContributor = currentPageContributors[0];
-    if (!currentContributor) {
-      // Show empty state if card exists
-      const bodyDiv = card.querySelector('.r-115tad6');
-      if (bodyDiv) {
-        bodyDiv.innerHTML = `
-          <div class="r-13awgt0 r-1ifxtd0" style="padding-top: 16px;">
-            <div dir="auto" class="css-146c3p1 r-fdjqy7 r-1inkyih r-135wba7" style="
-              color: var(--mxm-contentPrimary);
-              font-size: 13px;
-              font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-            ">⚠️ Couldn't find any contributors. <strong>Click the contributor viewer button for more detailed information.</strong>
-            </div>
-          </div>
-        `;
-      }
-      return;
+    const wrapper = document.querySelector('.mxm-contributor-data-wrapper');
+    if (wrapper) {
+      wrapper.remove();
+      createContributorDataCard();
+      debugLog('Contributor Data card rebuilt for new data');
     }
-
-    // Update the card content
-    const keyExact = currentContributor.name.toLowerCase();
-    const keyInit = normalizeName(currentContributor.name);
-    const matchRows = permissionData[keyExact] || permissionData[keyInit] || [];
-    const firstPerm = matchRows[0]?.permission;
-
-    // Update contributor name and details
-    const nameElement = card.querySelector('div[style*="font-weight: 500"]');
-    if (nameElement) {
-      nameElement.textContent = currentContributor.name;
-    }
-
-    const roleElement = card.querySelector('div[style*="font-size: 12px"]');
-    if (roleElement) {
-      roleElement.textContent = `${currentContributor.role} • ${currentContributor.type.replace(/_/g, ' ')}`;
-    }
-
-    // Update permission display
-    const permissionElement = card.querySelector('span[style*="color:"]');
-    if (permissionElement && firstPerm) {
-      permissionElement.textContent = lockDisplay[firstPerm] ? lockDisplay[firstPerm][1] : 'Unknown permission';
-      permissionElement.style.color = firstPerm === 'no' ? '#ff4444' : firstPerm === 'ask' ? '#ffbb00' : '#2ecc71';
-    }
-
-    debugLog('Contributor Data card updated');
   };
 
   // Create the contributor data card when the page loads
