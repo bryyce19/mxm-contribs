@@ -1,6 +1,6 @@
-## 📖 Musixmatch Contributor Viewer — User Guide
+## Musixmatch Contributor Viewer — User Guide
 
-### ✅ Step 1: Install the Script
+### Install the Script
 
 1. **Go to the install website**: https://bryyce19.github.io/mxm-contribs/
 2. Click the **Install Script** button.
@@ -9,31 +9,28 @@
 
 ---
 
-### 🎯 Step 2: Using the Script
+### Using the Script
 
-#### 🧭 Where to Start
+#### Where to Start
 
 * Navigate to **any mission** or **non-mission lyrics** page on [musixmatch.com](https://www.musixmatch.com/).
 
-#### 🔍 Accessing Contributor Info
+#### Seeing Contributor Info
 
 1. Click the <img src="https://i.postimg.cc/bw1b5x6c/image.png" alt="info icon" width="18" style="vertical-align: text-bottom;"> **info icon**.
 2. The first time, a new **orange button** <img src="https://i.postimg.cc/rwG0j8mq/image.png" alt="people emoji" width="18" style="vertical-align: text-bottom;"> will appear.
 3. Click the button to **load contributors**.
+4. The latest contributor will also appear in an injected assistant-menu tab.
 
 ---
 
-### 🧰 Features & Filters
+### Features
 
-#### 🎛️ Filter by Edit Type
+#### Most Recent Contributor
 
-* After loading, you can filter contributors by **edit type** (at the moment, only lyrics and tagging are available).
+* The **orange-colored name** at the top of the contributor list shows the **most recent contributor**.
 
-#### 🟧 Recent Contributor Highlight
-
-* The **orange-colored name** shows the **most recent contributor**.
-
-#### 🛡️ Contributor Roles
+#### Contributor Roles
 
 | Icon                                                                                                                               | Meaning             |
 | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
@@ -43,15 +40,18 @@
 
 ---
 
-### 🎨 UI Controls
+### UI Controls
 
 * <img src="https://i.postimg.cc/P56L9Sm7/image.png" alt="moon icon" width="18" style="vertical-align: text-bottom;"> **Theme Toggle**: Click the **moon icon** at the top right to switch between **light** and **dark** mode.
-* **Close Viewer**: Click the **X icon** in the top right corner.
-* <img src="https://i.postimg.cc/kXqB50sZ/image.png" alt=" arrow" width="18" style="vertical-align: text-bottom;"> **Manual Scroll**: Use these if the scroll bar doesn't work (a known issue on Musixmatch).
+* **Close Viewer**: Click the **X icon** in the top right corner or [NEW] click anywhere outside of the popup.
 
 ---
 
-### ⚠️ Warnings & Errors
+### Warnings & Errors
 
 * This viewer only works on **tool/mission pages**.
 * If you visit a page that isn't supported, the script will show an **error**.
+
+
+
+Note: this guide is missing a significant amount content and will be updated soon.
