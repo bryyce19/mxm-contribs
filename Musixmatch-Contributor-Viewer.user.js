@@ -2166,6 +2166,8 @@
     }, 1000);
   });
 
+  let assistantMenuObserver = null;
+
   // Function to create and inject the Contributor Data card into the assistant menu
   const createContributorDataCard = () => {
     let retryCount = 0;
@@ -2583,28 +2585,32 @@
     checkForAssistantMenu();
 
     // Also watch for the assistant menu to appear dynamically
-    const observer = new MutationObserver((mutations) => {
-      const assistantMenu = getAssistantMenu();
-      if (assistantMenu && !assistantMenu.querySelector('.mxm-contributor-data-card') &&
-        !document.querySelector('.mxm-contributor-data-card')) {
+    if (!assistantMenuObserver) {
+      assistantMenuObserver = new MutationObserver((mutations) => {
+        const assistantMenu = getAssistantMenu();
+        if (!assistantMenu) return;
+
+        const cardInCurrentMenu = assistantMenu.querySelector('.mxm-contributor-data-card');
+        if (cardInCurrentMenu) return;
+
+        const staleWrapper = document.querySelector('.mxm-contributor-data-wrapper');
+        if (staleWrapper && !assistantMenu.contains(staleWrapper)) {
+          staleWrapper.remove();
+        }
+
         const currentContributor = currentPageContributors[0];
         if (currentContributor) {
           debugLog('Assistant menu appeared, attempting to add card');
           checkForAssistantMenu();
         }
-      }
-    });
+      });
 
-    // Observe the document body for changes
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
-
-    // Clean up observer after a reasonable time
-    setTimeout(() => {
-      observer.disconnect();
-    }, 60000); // Stop observing after 60 seconds
+      // Observe the document body for changes
+      assistantMenuObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+    }
   };
 
   // Function to update the contributor data card when data changes
