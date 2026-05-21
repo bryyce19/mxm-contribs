@@ -2,8 +2,8 @@
 // @name         Musixmatch-Contributor-Viewer
 // @author       Bryce
 // @namespace    http://tampermonkey.net/
-// @version      5.5.4
-// @description  Small fixes + reenabled contributor data card in the beta studio.
+// @version      5.5.5
+// @description  Fixed contributor card layout and visibility bugs when minimizing the Assistant menu.
 // @icon         https://raw.githubusercontent.com/bryyce19/mxm-contribs/refs/heads/main/img/finallogosquare.png
 // @match        https://curators.musixmatch.com/*
 // @match        https://curators-beta.musixmatch.com/*
@@ -2308,7 +2308,6 @@
             <div class="r-za8utv r-1867qdf r-3pj75a r-95jzfe r-1j8onyl r-1kribmz r-d045u9 ${isBryce ? 'mxm-bryce-card' : ''}" style="
               padding-bottom: 16px;
               border: ${isBryce ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid var(--mxm-backgroundSecondary)'};
-              margin-top: 10px;
               ${isBryce ? 'background: #1b1b1b;' : ''}
               position: relative;
               overflow: hidden;
@@ -2556,6 +2555,7 @@
       const cardWrapper = document.createElement('div');
       cardWrapper.innerHTML = cardHTML;
       cardWrapper.className = 'mxm-contributor-data-wrapper';
+      cardWrapper.style.display = 'none'; // Start hidden to prevent flashing
 
       // Insert the card
       if (assistantHeader && assistantHeader.parentNode) {
@@ -2582,29 +2582,57 @@
     // Start checking for the assistant menu
     checkForAssistantMenu();
 
-    // Also watch for the assistant menu to appear dynamically
-    const observer = new MutationObserver((mutations) => {
-      const assistantMenu = getAssistantMenu();
-      if (assistantMenu && !assistantMenu.querySelector('.mxm-contributor-data-card') &&
-        !document.querySelector('.mxm-contributor-data-card')) {
+    // UI Poller ---
+    // note to self: react native web recycles DOM nodes and swaps classes instead of unmounting.
+    // a poller is  more reliable than a mutationobserver for this
+    if (window.mxmContributorPoller) clearInterval(window.mxmContributorPoller);
+
+    window.mxmContributorPoller = setInterval(() => {
+      if (!location.pathname.startsWith('/tool')) return;
+
+      const activeMenu = getAssistantMenu();
+      const existingCard = document.querySelector('.mxm-contributor-data-wrapper');
+
+      // 1. SPA Migration: If card is trapped in a background SPA tab container, destroy it
+      if (activeMenu && existingCard && !activeMenu.contains(existingCard)) {
+        existingCard.remove();
+        return; // Next tick will rebuild it in the active container
+      }
+
+      // 2. Auto-Rebuild: If the active menu is open but has no card, build it
+      if (activeMenu && !existingCard) {
         const currentContributor = currentPageContributors[0];
         if (currentContributor) {
-          debugLog('Assistant menu appeared, attempting to add card');
+          retryCount = 0; // Reset retries to allow building
           checkForAssistantMenu();
         }
       }
-    });
 
-    // Observe the document body for changes
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
+      // 3. Visibility Enforcement: Hide card when the Assistant is minimized to a pill
+      if (existingCard && existingCard.parentElement) {
+        const parent = existingCard.parentElement;
+        let isMinimized = false;
 
-    // Clean up observer after a reasonable time
-    setTimeout(() => {
-      observer.disconnect();
-    }, 60000); // Stop observing after 60 seconds
+        if (parent.className.includes('r-150rngu')) {
+          // Based on live DOM logs, when Musixmatch minimizes the pill, 
+          // it adds r-pm9dpa / r-18kxxzh and removes r-95jzfe / r-3pj75a.
+          // Note: The container height DOES NOT shrink to 0 due to overflow rules,
+          // so we MUST rely on these specific RNW state classes.
+          if (parent.className.includes('r-pm9dpa') ||
+            parent.className.includes('r-18kxxzh') ||
+            !parent.className.includes('r-95jzfe')) {
+            isMinimized = true;
+          }
+        }
+
+        // If no active menu was found at all, it is definitely closed
+        if (!activeMenu) {
+          isMinimized = true;
+        }
+
+        existingCard.style.display = isMinimized ? 'none' : 'block';
+      }
+    }, 500);
   };
 
   // Function to update the contributor data card when data changes
