@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://bryyce19.github.io/mxm-contribs/sitemap.xml
